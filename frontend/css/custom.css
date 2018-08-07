@@ -1,0 +1,76 @@
+.main_logo {
+  margin-left: 218%;
+  margin-top: 50%; }
+
+.main_form {
+  padding-left: 20%; }
+
+.btn, .btn-large {
+  background-color: #1e1e2b !important; }
+
+.nav_dashboard {
+  height: 15vh;
+  background-color: #053150;
+  border-radius: 10px;
+  margin-bottom: 0px; }
+
+@media only screen and (min-width: 993px) {
+  .container {
+    width: 90%; } }
+.dashboard_logo {
+  background-color: white;
+  position: absolute;
+  top: 20px;
+  left: 100px;
+  border-radius: 50%;
+  height: 100px;
+  width: 100px;
+  box-shadow: 2px 2px 11px #545a5f; }
+  .dashboard_logo img {
+    position: relative;
+    width: 85px;
+    padding-top: 15%;
+    padding-left: 18%; }
+
+.dasboard_base {
+  background-color: #dff2ff;
+  width: 99%;
+  margin-left: 5px !important; }
+
+.main_card {
+  background-color: red;
+  height: 57vh;
+  width: 100%;
+  margin-right: 15px;
+  margin-left: 20px; }
+
+.secundary_card {
+  background-color: pink;
+  height: 57vh;
+  width: 100%;
+  padding-left: 30px; }
+  .secundary_card .row {
+    width: 98%;
+    height: 25vh;
+    background-color: green;
+    margin-top: 12px; }
+    .secundary_card .row .col {
+      height: 100%; }
+
+.graphic_base {
+  height: 35vh; }
+
+.collapsible {
+  display: inline-flex;
+  margin-left: 7%;
+  border: none;
+  margin: none;
+  -webkit-box-shadow: none;
+  box-shadow: none; }
+  .collapsible li {
+    width: 25vw;
+    margin-right: 30px; }
+    .collapsible li .collapsible-body {
+      background-color: white; }
+
+/*# sourceMappingURL=custom.css.map */
