@@ -4,7 +4,7 @@ ini_set('log_errors', 1);
 require_once 'db_mng.php';
 
 $conn = new Connect();
-$tokenMng = new MELIConnect(1)
+$tokenMng = new MELIConnect(1);
 
 if (isset($_POST['code'])) {
     $authorization_code = $_POST['code'];
