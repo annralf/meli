@@ -75,7 +75,6 @@ class MELIConnect {
 	    $application_id = $this->app_detail->application_id;
 	    $application_secret_key = $this->app_detail->secret_key;
 	    $url = "https://api.mercadolibre.com/oauth/token?grant_type=authorization_code&client_id=$application_id&client_secret=$application_secret_key&code=$code&redirect_uri=https://app.tokioexpress.co/resources/auth.php";
-	    echo $url;die();
 	    $connection = new CURLRequest($url, 'GET',NULL);
 	    $this->set_access_token($connection->access_token, $connection->refresh_token);
 	}
