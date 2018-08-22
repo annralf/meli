@@ -4,7 +4,7 @@ require_once 'db_mng.php';
 
 $conn    = new Connect();
 $k	 = 1;
-$key     ="Samsung";
+$key     ="Samsung,AMD,Intel,Adata,Asus,Corsair,Crucial,Dell,EVGA,Gigabyte,Kingston,Lenovo,MSI,Micron,SanDisk,Nzxt,Seagate,RAZER,Google,Toshiba,Steelseries,Motorola,Sony,HP,Elegoo,Aukey,Havit,Redragon,Hcman,Wester Digital,Vengance,HyperX Kingston";
 $j       = 1;
 
 $searchKey =explode(",", $key);
@@ -23,7 +23,7 @@ function newSearch($type, $url){
 		$sku_counter++;
 	}
     }
-    if ($result['pages'] !== 0) {
+    if (isset($result['pages'])) {
     	return strtoupper($result['pages']);
     }else{
 	return 0;

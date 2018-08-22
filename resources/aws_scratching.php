@@ -34,13 +34,16 @@ class awsitem
 	}
 
     public function insert_item(){
-	$sql = "SELECT sku FROM aws_sku  WHERE sku NOT IN (SELECT sku FROM aws_items) LIMIT 2";
+	$sql = "SELECT sku FROM aws_sku  WHERE sku NOT IN (SELECT sku FROM aws_items)";
 	$result = pg_query($sql);
+	$i = 0;
 	while ($item = pg_fetch_object($result)) {
 		$url = "https://www.amazon.com/dp/$item->sku";
 		$resultSearch = $this->scratch->crawler($url,$item->sku);
 		if ($resultSearch['notavaliable'] == 1 || !isset($resultSearch['notavaliable'])) {
 			$this->commit .= "UPDATE aws_sku SET active = 'false' WHERE sku = '$item->sku';";
+			echo $i."-Not Avaliable".$item->sku."\n";	    
+
 		}else{
 				$sku		       =     $resultSearch['sku'];
 				$product_typ	       =     $resultSearch['product_type'];
@@ -63,8 +66,10 @@ class awsitem
 				$item_width	       =     $resultSearch['item_width'];
 				$image_url             =     $resultSearch['url'];
 			$this->commit .= "INSERT INTO aws_items (sku, product_type, product_category, product_title_english, specification_english, brand, model, image_url, sale_price, quantity, weight_unit, dimension_unit, package_width, package_height, package_length, is_prime, item_height, item_length, item_width, url) 
-			VALUES ('$sku', '$product_type','$product_category', '$product_title_english', '$specification_english', '$brand', '$model', '$image_url', '$sale_price', '$quantity', '$weight_unit', '$dimension_unit', '$package_width', '$package_height', '$package_length', '$is_prime', '$item_height', '$item_length', '$item_width', '$url')";		    
+			VALUES ('$sku', '$product_type','$product_category', '$product_title_english', '$specification_english', '$brand', '$model', '$image_url', '$sale_price', '$quantity', '$weight_unit', '$dimension_unit', '$package_width', '$package_height', '$package_length', '$is_prime', '$item_height', '$item_length', '$item_width', '$url')";	
+		    echo $i."-".$sku."\n";	    
 		}
+		  $i++;
 	}
 	pg_query($this->commit);
     }
@@ -90,9 +95,9 @@ class awsitem
 	$sql = "SELECT sku, product_title_english, specification_english FROM aws_items WHERE NOT IN (SELECT sku FROM aws_translations);";
 	$result = pg_query($sql);
 	while ($item = pg_fetch_object($result)) {
-		$specification_english = urlencode(substr($item->specification_english,0,4600);
+		$specification_english = urlencode(substr($item->specification_english,0,4600));
 		$product_title_english = substr($result['product_title_english'],0,100);						 
-		$url = "https://translate.google.com/?hl=&langpair=en|es&text=$specification_english~~~^~~~$product_title_english");
+		$url = "https://translate.google.com/?hl=&langpair=en|es&text=$specification_english~~~^~~~$product_title_english";
 		$resultSearch = $this->scratch->crawler_translate($url);
 		if ($resultSearch['notavaliable'] !== 1) {
 			$title       = $resultSearch['title'];

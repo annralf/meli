@@ -458,7 +458,7 @@ function crawler_translate($url) {
 		}else{
 			$item_detail['notavaliable'] = 1;
 			$item_detail['message']      = "No Connection";
-			$item_detail['sku']         = (string) $sku;
+			#$item_detail['sku']         = (string) $sku;
 			return $item_detail;
 		}
 	}
