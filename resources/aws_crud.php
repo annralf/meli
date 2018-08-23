@@ -20,7 +20,7 @@ class aws_mng
 	}
 
 	function update(){
-		$sql = "select upper(sku) as sku from aws_sku order by id desc offset 10 limit 15;";
+		$sql = "select upper(sku) as sku from aws_sku order by id desc limit 15;";
 		$result = pg_query($sql);
 		$list = array();
 		$cant = 0;
@@ -46,9 +46,9 @@ class aws_mng
 							$item = pg_fetch_object(pg_query($sql_));
 							if ($item) {
 								$sale_price = $aws_result['sale_price'];
-								$quantity   = ($quantity == null) ? $aws_result['quantity']: 0;
+								$quantity   = ($aws_result['quantity'] == null) ? $aws_result['quantity']: 0;
 								$package_weight   = $aws_result['package_weight'];
-								$sql_statement = "UPDATE aws_items SET sale_price = '$sale_price', quantity='$quantity', package_weight='$package_weight' update_date = '$date' WHERE id = $item->id";
+								$sql_statement = "UPDATE aws_items SET sale_price = '$sale_price', quantity='$quantity', package_weight='$package_weight', update_date = '$date' WHERE id = $item->id";
 							}else{
 								$product_type     = pg_escape_string(utf8_encode($aws_result['product_type']));
 								$title	    = pg_escape_string(utf8_encode($aws_result['product_title_english']));
@@ -81,17 +81,14 @@ class aws_mng
 								$avaliable	= $aws_result['avaliable'];
 								$url	      = $aws_result['url'];
 								$sku_padre	= $aws_result['ParentASIN'];
-								$description_es   = urlencode(substr($description,0,4600));
-								$url_translate = "https://translate.google.com/?hl=&langpair=en|es&text=$description~~~^~~~$title";
-								$resultSearch = $this->scratch->crawler_translate($url_translate);
-								if ($resultSearch['notavaliable'] !== 1) {
-									$title_es       = $resultSearch['title'];
-									$description_es = $resultSearch['description'];
-								}else{
-									$title_es       = "N/T";
-									$description_es = "N/T";
-								}
-								$sql_statement = "INSERT INTO aws_items (sku, product_type, ean, product_category, product_title_english,specification_english, brand, model, image_url, upc, currency,sale_price, quantity, condition, weight_unit, package_weight,package_height, package_length, clothingsize, color, department, is_prime, item_height, item_length, item_width, create_date, update_date, avaliable, url, package_width, sku_padre, title_spanish, specification_spanish) VALUES ('$sku', '$product_type', '$ean', '$product_category', '$title', '$description', '$brand', '$model', '$image_url', '$upc', '$currency','$sale_price', '$quantity', '$condition', '$weight_unit', '$package_weight','$package_height', '$package_length', '$clothingsize', '$color', '$department', '$is_prime', '$item_height', '$item_length', '$item_width', '$date', '$date', '$avaliable', '$url', '$package_width', '$sku_padre', '$title_es', '$description_es')";
+								$description_es   = substr($description,0,4600);
+								$text_es = "$title---$description_es---$product_category";
+								$resultSearch = $this->scratch->translate($text_es);
+								$resultSearch = explode('---', $resultSearch);
+								$title_es = $resultSearch[0];
+								$description_es = $resultSearch[1];
+								$product_category_es = $resultSearch[2];
+								$sql_statement = "INSERT INTO aws_items (sku, product_type, ean, product_category, product_title_english,specification_english, brand, model, image_url, upc, currency,sale_price, quantity, condition, weight_unit, package_weight,package_height, package_length, clothingsize, color, department, is_prime, item_height, item_length, item_width, create_date, update_date, avaliable, url, package_width, sku_padre, title_spanish, specification_spanish, product_category_es) VALUES ('$sku', '$product_type', '$ean', '$product_category', '$title', '$description', '$brand', '$model', '$image_url', '$upc', '$currency','$sale_price', '$quantity', '$condition', '$weight_unit', '$package_weight','$package_height', '$package_length', '$clothingsize', '$color', '$department', '$is_prime', '$item_height', '$item_length', '$item_width', '$date', '$date', '$avaliable', '$url', '$package_width', '$sku_padre', '$title_es', '$description_es','$product_category_es')";
 								$val = 1;
 							}
 							break;

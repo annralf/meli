@@ -58,41 +58,30 @@ class Meli
 			$match_sub_category  = 0;
 			$match_category      = 0;
 			$percent             = 0;	
-			$url_translate = "https://translate.google.com/?hl=&langpair=en|es&text=$category_name";
-			$resultSearch = $this->scratch->crawler_translate($url_translate);
-			print_r($resultSearch);die();
-			if ($resultSearch['notavaliable'] !== 1) {
-				$title_es       = $resultSearch['title'];
-				$description_es = $resultSearch['description'];
-			}else{
-				$title_es       = "N/T";
-				$description_es = "N/T";
-			}
-			$category_name      = explode(",", $category_name);
+			$category_name      = explode(",", trim($category_name));
 			$total_aws_category = count($category_name);				
 			$percent            = 0;
-			$sql_padre = "SELECT padre, definition FROM meli_category_master WHERE padre = '0';";
+			$sql_padre = "SELECT id, padre, definition FROM meli_category_master WHERE padre = '0';";
 			$result = pg_query($sql_padre);
 			$match_category_padre = 0;
 			$last_category_padre = 0;
 			$meli_padre_id = "";
+			$category_id_final;
 			foreach ($category_name as $key) {
 				while ($category_padre = pg_fetch_object($result)) {
 					similar_text($category_padre->definition, $key, $last_category_padre);
 					if ($last_category_padre > $match_category_padre) {
 						$match_category_padre = $last_category_padre;
-						$meli_padre_id    = $category_padre->padre;
+						$meli_padre_id    = $category_padre->id;
 					}
 				}
 			}
-			echo $meli_padre_id;die();
-			#print_r($this->validateCategory($meli_padre_id));die();
 			$sql = "SELECT COUNT(*) FROM meli_category_master WHERE padre = '$meli_padre_id';";
 			$count_category = pg_fetch_array(pg_query($sql));
 			if ($count_category['count'] > 1) {
 				$root = $this->leaf_category($meli_padre_id, $total_aws_category, $category_name);
 			} else {
-				$root = $sub_category_id;
+				$root = $meli_padre_id;
 			}
 			$category_id = $this->leaf_category($meli_padre_id, $total_aws_category, $category_name);
 			$root = $this->validateCategory($category_id);
@@ -129,13 +118,25 @@ class Meli
 							}
 						}
 					}
-					return $category_id;
+					$category_id_final = $category_id;
 				}else{
-					return $category_id;
+					$category_id_final = $category_id;
 				}
 			}else{
-				return $category_id;
+				$category_id_final = $category_id;
 			}
+			$category_info = $this->validateCategory($category_id_final);
+			$shipping_mode = (array_search('me2', $category_info->settings->shipping_modes)) ? array_search('me2', $category_info->settings->shipping_modes) : array_search('custom', $category_info->settings->shipping_modes);
+			$buying_mode = (array_search('buy_it_now', $category_info->settings->buying_modes)) ? array_search('buy_it_now', $category_info->settings->buying_modes): array_search('classified', $category_info->settings->buying_modes);
+			$currency = array_search('COP', $category_info->settings->currencies);
+			$category_info = array(
+			    'category_id' => $category_info->id,
+			    'buying_mode' => $category_info->settings->buying_modes[$buying_mode],
+			    'shipping_mode' => $category_info->settings->shipping_modes[$shipping_mode],
+			    'currency' => $category_info->settings->currencies[$currency],
+			    'domain' => $category_info->settings->vip_subdomain
+			);
+			return $category_info;
 		}
 
 		public function set_price($weight,$base_price){
@@ -272,24 +273,81 @@ class Meli
 			curl_close($ch);
 			return $show;
 		}
-		/*public function newItem(){
+		public function newItem(){
 			$this->connect;
 			$id = $this->shop_detail->id;
-			$sql = "SELECT * FROM meli_item_detail WHERE shop_id = $id;";
+			$sql = "SELECT * FROM meli_item_detail WHERE shop_id = $id LIMIT 1;";
+			$result = pg_query($sql);
+			$delivery_time = "TIEMPOS DE ENTREGA";
+			$delivery_time .= "\n";
+			$delivery_time .= "DE 10 A 15 DIAS HABILES";
+			$delivery_time .= "\n";
+			$delivery_time .= "&#9620;&#9620;&#9620;&#9620;&#9620;&#9620;&#9620;&#9620;&#9620;&#9620;&#9620;&#9620;&#9620;";
+			$delivery_time .= "\n";
+			while ($item = pg_fetch_object($result)) {
+				$category_info = $this->search_category($item->category_id);
+				$images      = explode("~^~", $item->pictures);
+				$pictures = array();
+				$i = 0;
+				while ($i < count($images) && $i < 8) {
+				    array_push($pictures, array('source' => $images[$i]));
+				    $i++;					
+				}
+				$shipping = array();
+				if($category_info['shipping_mode'] == 'me2'){
+				    $shipping = array('mode'    => 'me2', 
+						      'local_pick_up'    => false, 
+						      'free_shipping'    => true ,
+						      'free_methods' => array(),
+						      'tags' => array('mandatory_free_shipping'));
+				}else{
+				    $shipping = array('mode'    => 'custom', 
+						      'local_pick_up'    => false, 
+						      'free_shipping'    => false , 
+						      'costs' => array('description' => 'Pagar el Envío en mi Domicilio', 
+						      'cost' => 1));
+				}
+				$new_item = array(
+					'title' => $item->title,
+					'category_id' => $category_info['category_id'],
+					'domain_id' => $category_info['domain'],
+					'price' => $this->set_price($item->weight,$item->price),
+					'currency_id' => $category_info['currency'],
+					'available_quantity' => $item->avaliable_quantity,
+					'buying_mode' => $category_info['buying_mode'],
+					'listing_type_id' => 'gold_special',
+					'condition' => 'new',
+					'description' => $delivery_time.$item->complementary_description,
+					'warranty' => $item->warranty,
+					'pictures' => $pictures,
+					'seller_custom_field' => $item->sku,
+					'shipping' => $shipping
+				);
+				print_r($new_item);
+			}
+
+		}
+		public function updateItem(){
+			$this->connect;
+			$id = $this->shop_detail->id;
+			$sql = "SELECT price, avaliable_quantity FROM meli_item_detail WHERE shop_id = $id;";
 			$result = pg_query($sql);
 			while ($item = pg_fetch_object($result)) {
 				$new_item = array(
-					'title' => $item->title,
-					'category_id' => $this->
+					'price' => $this->set_price($item->weight,$item->price),
+					'available_quantity' => $item->avaliable_quantity,
 				);
+				print_r($new_item);
 			}
-		}*/
+
+		}
 
 
 	}
 
 	$t = new Meli(1);
 	#echo $t->set_price(34,1049.99);
-	$category = "Departments";
-	$category_id = $t->search_category($category);
-	print_r($t->validateCategory($category_id));
+	$category = " Productos de oficina, categorías, artículos escolares y de oficina, accesorios de escritorio y organizadores del área de trabajo, alfombrillas para ratón y reposamuñecas, alfombrillas para ratón                                                       ";
+	#$category_id = $t->search_category($category);
+	#print_r($category_id);
+	$t->newItem();

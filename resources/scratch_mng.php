@@ -464,8 +464,21 @@ function crawler_translate($url) {
 	}
 }
 
+function translate($text){
+    $text = urlencode($text);
+    $url = "https://translate.google.com/?hl=&langpair=en|es&text=$text";
+    $path = "#(TRANSLATED_TEXT=')(\N+?')#i";
+    $path_del = "<textarea id=source name=text wrap=SOFT tabindex=0 dir=\"ltr\" spellcheck=\"false\" autocapitalize=\"off\" autocomplete=\"off\" autocorrect=\"off\">";
+    $response = file_get_contents($url);
+    preg_match($path, $response,$return);
+    $traduction = substr($return[2],0,-1);
+    return $traduction;
+
 }
+
+}
+#$test = new Amazon();
+#die();
 /*
-$test = new Amazon();
 print_r($test->crawler("https://www.amazon.com/dp/B003BMD75E", "B077NPGNR8", "23456"));
 */
