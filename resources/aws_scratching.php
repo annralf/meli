@@ -42,7 +42,7 @@ class awsitem
 		$resultSearch = $this->scratch->crawler($url,$item->sku);
 		if ($resultSearch['notavaliable'] == 1 || !isset($resultSearch['notavaliable'])) {
 			$this->commit .= "UPDATE aws_sku SET active = 'false' WHERE sku = '$item->sku';";
-			echo $i."-Not Avaliable".$item->sku."\n";	    
+			echo $i."-Not Avaliable ".$item->sku."\n";	    
 
 		}else{
 				$sku		       =     $resultSearch['sku'];

@@ -20,10 +20,11 @@ class aws_mng
 	}
 
 	function update(){
-		$sql = "select upper(sku) as sku from aws_sku order by id desc limit 15;";
+		$sql = "select upper(sku) as sku from aws_sku order by id desc;";
 		$result = pg_query($sql);
 		$list = array();
 		$cant = 0;
+		$i = 1;
 		while ($sku = pg_fetch_object($result)) {
 			$cant = count($list);
 			if ($cant < 10) {
@@ -85,9 +86,9 @@ class aws_mng
 								$text_es = "$title---$description_es---$product_category";
 								$resultSearch = $this->scratch->translate($text_es);
 								$resultSearch = explode('---', $resultSearch);
-								$title_es = $resultSearch[0];
-								$description_es = $resultSearch[1];
-								$product_category_es = $resultSearch[2];
+								$title_es = pg_escape_string(utf8_encode($resultSearch[0]));
+								$description_es = pg_escape_string(utf8_encode($resultSearch[1]));
+								$product_category_es = (isset($resultSearch[2])) ? pg_escape_string(utf8_encode($resultSearch[2])) : "";
 								$sql_statement = "INSERT INTO aws_items (sku, product_type, ean, product_category, product_title_english,specification_english, brand, model, image_url, upc, currency,sale_price, quantity, condition, weight_unit, package_weight,package_height, package_length, clothingsize, color, department, is_prime, item_height, item_length, item_width, create_date, update_date, avaliable, url, package_width, sku_padre, title_spanish, specification_spanish, product_category_es) VALUES ('$sku', '$product_type', '$ean', '$product_category', '$title', '$description', '$brand', '$model', '$image_url', '$upc', '$currency','$sale_price', '$quantity', '$condition', '$weight_unit', '$package_weight','$package_height', '$package_length', '$clothingsize', '$color', '$department', '$is_prime', '$item_height', '$item_length', '$item_width', '$date', '$date', '$avaliable', '$url', '$package_width', '$sku_padre', '$title_es', '$description_es','$product_category_es')";
 								$val = 1;
 							}
@@ -111,13 +112,14 @@ class aws_mng
 							break;
 						}
 						if ($result_query > 0) {
-							echo "$sku $type_ok $date\n";
+							echo "$i - $sku $type_ok $date\n";
 						}else{
-							echo "$sku $type_bad $date\n";
-						}		
+							echo "$i - $sku $type_bad $date\n";
+						}
+						$i++;		
 					}
 				}
-				print_r($result);die();
+				sleep(10);
 			}
 		}
 	}
