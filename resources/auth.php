@@ -11,7 +11,6 @@ if (isset($_POST['code'])) {
 	$application_id = $tokenMng->app_detail->application_id;
 	$application_secret_key = $tokenMng->app_detail->secret_key;
 	$url = "https://api.mercadolibre.com/oauth/token?grant_type=authorization_code&client_id=$application_id&client_secret=$application_secret_key&code=$code&redirect_uri=https://app.tokioexpress.co/resources/auth.php";
-	$validation_url = "https://api.mercadolibre.com/items/validate?access_token=".$this->access_token;
 	$ch             = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
