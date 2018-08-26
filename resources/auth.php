@@ -7,6 +7,8 @@ $conn = new Connect();
 $tokenMng = new MELIConnect(1);
 
 if (isset($_POST['code'])) {
+	echo $_POST['code'];
+	die();
 	$authorization_code = $_POST['code'];
 	$application_id = $tokenMng->app_detail->application_id;
 	$application_secret_key = $tokenMng->app_detail->secret_key;
@@ -23,6 +25,7 @@ if (isset($_POST['code'])) {
 	echo $tokenMng->app_detail->set_access_token($connection->access_token, $connection->refresh_token);
 
 }else{
+	echo "aqui";
 	$application_id = $tokenMng->app_detail->application_id;
 	$url = "https://auth.mercadolibre.com.co/authorization?response_type=code&client_id=$application_id";
 	header("Location:".$url);
