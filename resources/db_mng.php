@@ -54,7 +54,7 @@ class MELIConnect {
 		$this->app_detail = pg_fetch_object(pg_query($sql));
 	}
 
-	function set_access_token($access_token,$refresh_token){
+	public function set_access_token($access_token,$refresh_token){
 	    $shop_id = $this->shop_id;
 	    $date = date("Y-m-d H:s:m");
 	    $sql = "UPDATE meli_shop SET access_token = '$access_token', refresh_access_token= '$refresh_token', update_date=  '$date' WHERE id = $shop_id;";
@@ -65,13 +65,13 @@ class MELIConnect {
 		return 0;
 	    }
 	}
-	function get_access_token(){
+	public function get_access_token(){
 	    $shop_id = $this->shop_id;
 	    $result = pg_fetch_object(pg_query("SELECT access_token, refresh_access_token FROM meli_shop WHERE id = $shop_id;"));
 	    return $result;
 	}
 
-	function search_access_token($code){
+	public function search_access_token($code){
 	    $application_id = $this->app_detail->application_id;
 	    $application_secret_key = $this->app_detail->secret_key;
 	    $url = "https://api.mercadolibre.com/oauth/token?grant_type=authorization_code&client_id=$application_id&client_secret=$application_secret_key&code=$code&redirect_uri=https://app.tokioexpress.co/resources/auth.php";
@@ -79,7 +79,7 @@ class MELIConnect {
 	    $this->set_access_token($connection->access_token, $connection->refresh_token);
 	}
 
-	function search_refresh_token(){
+	public function search_refresh_token(){
 	    $params = array(
 		'grant_type'    => 'refresh_token',
 		'client_id'     => $this->app_detail->application_id,

@@ -20,7 +20,7 @@ if (isset($_GET['code'])) {
 	curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
 	$connection = json_decode(curl_exec($ch));
 	curl_close($ch);
-	echo $tokenMng->app_detail->set_access_token($connection->access_token, $connection->refresh_token);
+	echo $tokenMng->set_access_token($connection->access_token, $connection->refresh_token);
 
 }else{
 	$application_id = $tokenMng->app_detail->application_id;
