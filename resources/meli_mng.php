@@ -208,7 +208,6 @@ class Meli
 
 		public function validate($item) {
 			$validation_url = "https://api.mercadolibre.com/items/validate?access_token=".$this->shop_detail->access_token;
-			echo $validation_url;die();
 			$ch             = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $validation_url);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
@@ -308,13 +307,14 @@ class Meli
 						      'costs' => array('description' => 'Pagar el Envío en mi Domicilio', 
 						      'cost' => 1));
 				}
+				$avaliable_quantity = ($item->avaliable_quantity == 0) ? 3:$item->avaliable_quantity;
 				$new_item = array(
 					'title' => $item->title,
 					'category_id' => $category_info['category_id'],
 					'domain_id' => $category_info['domain'],
 					'price' => $this->set_price($item->weight,$item->price),
 					'currency_id' => $category_info['currency'],
-					'available_quantity' => $item->avaliable_quantity,
+					'available_quantity' => $avaliable_quantity,
 					'buying_mode' => $category_info['buying_mode'],
 					'listing_type_id' => 'gold_special',
 					'condition' => 'new',
@@ -324,8 +324,8 @@ class Meli
 					'seller_custom_field' => $item->sku,
 					'shipping' => $shipping
 				);
-				print_r($this->validate());
-				print_r($new_item);
+				print_r($this->validate($new_item));
+				
 			}
 
 		}
