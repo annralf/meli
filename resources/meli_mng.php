@@ -207,7 +207,8 @@ class Meli
 		}
 
 		public function validate($item) {
-			$validation_url = "https://api.mercadolibre.com/items/validate?access_token=".$this->access_token;
+			$validation_url = "https://api.mercadolibre.com/items/validate?access_token=".$this->shop_detail->access_token;
+			echo $validation_url;die();
 			$ch             = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $validation_url);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
@@ -323,6 +324,7 @@ class Meli
 					'seller_custom_field' => $item->sku,
 					'shipping' => $shipping
 				);
+				print_r($this->validate());
 				print_r($new_item);
 			}
 
