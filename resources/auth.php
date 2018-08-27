@@ -24,6 +24,9 @@ if (isset($_GET['code'])) {
 
 }else{
 	$application_id = $tokenMng->app_detail->application_id;
+	if (isset(var)) {
+		# code...
+	}
 	$url = "https://auth.mercadolibre.com.co/authorization?response_type=code&client_id=$application_id";
 	header("Location:".$url);
 }
