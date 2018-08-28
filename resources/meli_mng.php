@@ -305,7 +305,7 @@ class Meli
 		public function newItem(){
 			$this->connect;
 			$id = $this->shop_detail->id;
-			$sql = "select * from meli_item_detail where id not in (select aws_id from meli_items where shop_id = $id)";
+			$sql = "select * from meli_item_detail where id not in (select aws_id from meli_items where shop_id = $id) limit 2";
 			$result = pg_query($sql);
 			$description_title = "DESCRIPCION DEL PRODUCTO";
 			$description_title .= "\n";
@@ -334,7 +334,8 @@ class Meli
 			while ($item = pg_fetch_object($result)) {
 				$description =  "";
 				$category_info = $this->search_category($item->category_id);
-				if(isset($category_info)){					
+				
+				if(isset($category_info) && $category_info['category_id'] !== ""){					
 					$images      = explode("~^~", $item->pictures);
 					$pictures = array();
 					$i = 0;
@@ -360,7 +361,7 @@ class Meli
 					$avaliable_quantity = ($item->avaliable_quantity == 0) ? 3:$item->avaliable_quantity;
 					$title = $this->scratch->change_simbols($item->title);
 					$description = str_replace(".-", "\n", $this->scratch->change_simbols($item->description));
-					$length = ($category_info['max_description_length'] - strlen($complementary_description)) -1; 
+					$length = (strlen($complementary_description) - $category_info['max_description_length']) -1; 
 					$length_title = $category_info['max_title_length'] -1;
 					if (strlen($title) >= $length_title) {
 						$pos   = strrpos($title,' ', $length_title);
@@ -393,6 +394,7 @@ class Meli
 					$validation = $this->validate($new_item);
 					if(!is_null($validation)){
 						echo "$k - item no created wrong validation\n";
+						print_r($validation);die();
 					}else{
 						$meli_item = $this->create($new_item);
 						if (isset($meli_item->id)) {
@@ -430,6 +432,8 @@ class Meli
 						}
 
 					}
+				}else{
+				    echo "$k - not category at $item->sku\n";
 				}
 				$k++;
 			}
