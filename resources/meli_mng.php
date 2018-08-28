@@ -394,7 +394,6 @@ class Meli
 					$validation = $this->validate($new_item);
 					if(!is_null($validation)){
 						echo "$k - item no created wrong validation\n";
-						print_r($validation);die();
 					}else{
 						$meli_item = $this->create($new_item);
 						if (isset($meli_item->id)) {
