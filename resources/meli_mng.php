@@ -370,10 +370,10 @@ class Meli
 						}
 						$title = substr($title, 0, $pos);
 					}
-					if (strlen($description) >= $length) {
+					/*if (strlen($description) >= $length) {
 						$pos   = strpos($description, ' ', $length);
 						$description = substr($description, 0, $pos);
-					}
+					}*/
 					$description = $description_title.$description.$complementary_description;
 					$new_item = array(
 						'title' => $title,
