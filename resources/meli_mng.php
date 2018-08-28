@@ -485,7 +485,12 @@ class Meli
 				);
 				$update = $this->banner($item->mpid,array('plain_text' => $description));
 				$update_item = $this->update($item->mpid, $update_item);
-				echo "$k - item $update_item->id\n";
+				if (isset($update_item->id)) {
+    				    echo "$k - item $update_item->id\n";
+				}else{
+    				    echo "$k - item $item->mpid - not updated\n";
+				    print_r($update_item);
+				}
 			}
 
 		}
