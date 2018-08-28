@@ -126,18 +126,29 @@ class Meli
 				$category_id_final = $category_id;
 			}
 			$category_info = $this->validateCategory($category_id_final);
-			$shipping_mode = (array_search('me2', $category_info->settings->shipping_modes)) ? array_search('me2', $category_info->settings->shipping_modes) : array_search('custom', $category_info->settings->shipping_modes);
-			$buying_mode = (array_search('buy_it_now', $category_info->settings->buying_modes)) ? array_search('buy_it_now', $category_info->settings->buying_modes): array_search('classified', $category_info->settings->buying_modes);
-			$currency = array_search('COP', $category_info->settings->currencies);
-			$category_info = array(
-				'category_id' => $category_info->id,
-				'buying_mode' => $category_info->settings->buying_modes[$buying_mode],
-				'shipping_mode' => $category_info->settings->shipping_modes[$shipping_mode],
-				'currency' => $category_info->settings->currencies[$currency],
-				'domain' => $category_info->settings->vip_subdomain,
-				'max_title_length' => $category_info->settings->max_title_length,
-				'max_description_length' => $category_info->settings->max_description_length
-			);
+			if (isset($category_info->settings)) {
+			    $shipping_mode = (array_search('me2', $category_info->settings->shipping_modes)) ? array_search('me2', $category_info->settings->shipping_modes) : array_search('custom', $category_info->settings->shipping_modes);
+			    $buying_mode = (array_search('buy_it_now', $category_info->settings->buying_modes)) ? array_search('buy_it_now', $category_info->settings->buying_modes): array_search('classified', $category_info->settings->buying_modes);
+			    $currency = array_search('COP', $category_info->settings->currencies);
+			    $category_info = array(
+				    'category_id' => $category_info->id,
+				    'buying_mode' => $category_info->settings->buying_modes[$buying_mode],
+				    'shipping_mode' => $category_info->settings->shipping_modes[$shipping_mode],
+				    'currency' => $category_info->settings->currencies[$currency],
+				    'domain' => $category_info->settings->vip_subdomain,
+				    'max_title_length' => $category_info->settings->max_title_length,
+				    'max_description_length' => $category_info->settings->max_description_length
+			    );
+			}else{
+			    $category_info = array(
+				    'category_id' => $category_info->id,
+				    'buying_mode' => 'buy_it_now',
+				    'shipping_mode' => 'me2',
+				    'currency' => 'COP',
+				    'domain' => 'articulo',
+				    'max_title_length' => 60,
+				    'max_description_length' => 400
+			}
 			return $category_info;
 		}
 
@@ -293,7 +304,7 @@ class Meli
 		public function newItem(){
 			$this->connect;
 			$id = $this->shop_detail->id;
-			$sql = "select * from meli_item_detail where id not in (select aws_id from meli_items where shop_id = $id)";
+			$sql = "select * from meli_item_detail where id not in (select aws_id from meli_items where shop_id = $id) limit 100";
 			$result = pg_query($sql);
 			$description_title = "DESCRIPCION DEL PRODUCTO";
 			$description_title .= "\n";
@@ -335,11 +346,12 @@ class Meli
 					                  'free_methods' => array(),
 					                  'tags' => array('mandatory_free_shipping'));
 				}else{
+					$costos = array();
+					array_push($costos, array('description' => 'Pagar el Envío en mi Domicilio', 'cost' => 1));
 					$shipping = array('mode'    => 'custom', 
 					                  'local_pick_up'    => false, 
 					                  'free_shipping'    => false , 
-					                  'costs' => array('description' => 'Pagar el Envío en mi Domicilio', 
-					                                   'cost' => 1));
+					                  'costs' => $costos);
 				}
 				$avaliable_quantity = ($item->avaliable_quantity == 0) ? 3:$item->avaliable_quantity;
 				$title = $this->scratch->change_simbols($item->title);
@@ -375,7 +387,8 @@ class Meli
 					'seller_custom_field' => $item->sku,
 					'shipping' => $shipping
 				);
-				if(!is_null($this->validate($new_item))){
+				$validation = $this->validate($new_item);
+				if(!is_null($validation)){
 					echo "$k - item no created wrong validation\n";
 				}else{
 					$meli_item = $this->create($new_item);
