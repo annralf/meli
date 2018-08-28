@@ -460,12 +460,13 @@ class Meli
 			$complementary_description .= "• Se puede realizar la devolución del producto en un periodo máximo de 5 días hábiles a partir de la entrega.";
 			$complementary_description .= "\n";
 			$complementary_description .= "• Los costos de retorno hacia los Estados Unidos son asumidos por el COMPRADOR, este varía de acuerdo con el peso y/o volumen del producto y no es reembolsable.";
+			$complementary_description = $delivery_time.$complementary_description;
 			$k = 1;
 			while ($item = pg_fetch_object($result)) {
 				$category_info = $this->search_category($item->category_id);
+				$description =  "";
 				$avaliable_quantity = ($item->avaliable_quantity == 0) ? 3:$item->avaliable_quantity;
 				$description = str_replace(".-", "\n", $this->scratch->change_simbols($item->description));
-				$complementary_description = $delivery_time.$complementary_description;
 				$length = ($category_info['max_description_length'] - (strlen($complementary_description) + strlen($description_title))) -1; 
 				if (strlen($description) >= $length) {
 					$pos   = strpos($description, ' ', $length);
