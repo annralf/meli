@@ -148,6 +148,7 @@ class Meli
 				    'domain' => 'articulo',
 				    'max_title_length' => 60,
 				    'max_description_length' => 400
+				);
 			}
 			return $category_info;
 		}
