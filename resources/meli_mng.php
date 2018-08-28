@@ -468,18 +468,12 @@ class Meli
 				$description = str_replace(".-", "\n", $this->scratch->change_simbols($item->description));
 				$complementary_description = $delivery_time.$complementary_description;
 				$length = ($category_info['max_description_length'] - (strlen($complementary_description) + strlen($description_title))) -1; 
-				$length_title = $category_info['max_title_length'] -1;
-				if (strlen($title) >= $length_title) {
-					$pos   = strpos($title,' ', $length_title);
-					$title = substr($title, 0, $pos);
-				}
 				if (strlen($description) >= $length) {
 					$pos   = strpos($description, ' ', $length);
 					$description = substr($description, 0, $pos);
 				}
 				$description = $description_title.$description.$complementary_description;
 				$update_item = array(
-					'title' => $title,
 					'price' => $this->set_price($item->weight,$item->price),
 					'available_quantity' => $avaliable_quantity
 				);
