@@ -127,27 +127,27 @@ class Meli
 			}
 			$category_info = $this->validateCategory($category_id_final);
 			if (isset($category_info->settings)) {
-			    $shipping_mode = (array_search('me2', $category_info->settings->shipping_modes)) ? array_search('me2', $category_info->settings->shipping_modes) : array_search('custom', $category_info->settings->shipping_modes);
-			    $buying_mode = (array_search('buy_it_now', $category_info->settings->buying_modes)) ? array_search('buy_it_now', $category_info->settings->buying_modes): array_search('classified', $category_info->settings->buying_modes);
-			    $currency = array_search('COP', $category_info->settings->currencies);
-			    $category_info = array(
-				    'category_id' => $category_info->id,
-				    'buying_mode' => $category_info->settings->buying_modes[$buying_mode],
-				    'shipping_mode' => $category_info->settings->shipping_modes[$shipping_mode],
-				    'currency' => $category_info->settings->currencies[$currency],
-				    'domain' => $category_info->settings->vip_subdomain,
-				    'max_title_length' => $category_info->settings->max_title_length,
-				    'max_description_length' => $category_info->settings->max_description_length
-			    );
+				$shipping_mode = (array_search('me2', $category_info->settings->shipping_modes)) ? array_search('me2', $category_info->settings->shipping_modes) : array_search('custom', $category_info->settings->shipping_modes);
+				$buying_mode = (array_search('buy_it_now', $category_info->settings->buying_modes)) ? array_search('buy_it_now', $category_info->settings->buying_modes): array_search('classified', $category_info->settings->buying_modes);
+				$currency = array_search('COP', $category_info->settings->currencies);
+				$category_info = array(
+					'category_id' => $category_info->id,
+					'buying_mode' => $category_info->settings->buying_modes[$buying_mode],
+					'shipping_mode' => $category_info->settings->shipping_modes[$shipping_mode],
+					'currency' => $category_info->settings->currencies[$currency],
+					'domain' => $category_info->settings->vip_subdomain,
+					'max_title_length' => $category_info->settings->max_title_length,
+					'max_description_length' => $category_info->settings->max_description_length
+				);
 			}else{
-			    $category_info = array(
-				    'category_id' => $category_id_final,
-				    'buying_mode' => 'buy_it_now',
-				    'shipping_mode' => 'me2',
-				    'currency' => 'COP',
-				    'domain' => 'articulo',
-				    'max_title_length' => 60,
-				    'max_description_length' => 400
+				$category_info = array(
+					'category_id' => $category_id_final,
+					'buying_mode' => 'buy_it_now',
+					'shipping_mode' => 'me2',
+					'currency' => 'COP',
+					'domain' => 'articulo',
+					'max_title_length' => 60,
+					'max_description_length' => 400
 				);
 			}
 			return $category_info;
@@ -330,103 +330,105 @@ class Meli
 			$complementary_description .= "\n";
 			$complementary_description .= "• Los costos de retorno hacia los Estados Unidos son asumidos por el COMPRADOR, este varía de acuerdo con el peso y/o volumen del producto y no es reembolsable.";
 			$k = 1;
+			$complementary_description = $delivery_time.$complementary_description;
 			while ($item = pg_fetch_object($result)) {
 				$category_info = $this->search_category($item->category_id);
-				$images      = explode("~^~", $item->pictures);
-				$pictures = array();
-				$i = 0;
-				while ($i < count($images) && $i < 8) {
-					array_push($pictures, array('source' => $images[$i]));
-					$i++;					
-				}
-				$shipping = array();
-				if($category_info['shipping_mode'] == 'me2'){
-					$shipping = array('mode'    => 'me2', 
-					                  'local_pick_up'    => false, 
-					                  'free_shipping'    => true ,
-					                  'free_methods' => array(),
-					                  'tags' => array('mandatory_free_shipping'));
-				}else{
-					$costos = array();
-					array_push($costos, array('description' => 'Pagar el Envío en mi Domicilio', 'cost' => 1));
-					$shipping = array('mode'    => 'custom', 
-					                  'local_pick_up'    => false, 
-					                  'free_shipping'    => false , 
-					                  'costs' => $costos);
-				}
-				$avaliable_quantity = ($item->avaliable_quantity == 0) ? 3:$item->avaliable_quantity;
-				$title = $this->scratch->change_simbols($item->title);
-				$description = str_replace(".-", "\n", $this->scratch->change_simbols($item->description));
-				$complementary_description = $delivery_time.$complementary_description;
-				$length = ($category_info['max_description_length'] - strlen($complementary_description)) -1; 
-				$length_title = $category_info['max_title_length'] -1;
-				if (strlen($title) >= $length_title) {
-					$pos   = strrpos($title,' ', $length_title);
-					if ($pos > $length_title) {
-					    $pos -= $pos - $length_title;
+				if(isset($category_info)){					
+					$images      = explode("~^~", $item->pictures);
+					$pictures = array();
+					$i = 0;
+					while ($i < count($images) && $i < 8) {
+						array_push($pictures, array('source' => $images[$i]));
+						$i++;					
 					}
-					$title = substr($title, 0, $pos);
-				}
-				if (strlen($description) >= $length) {
-					$pos   = strpos($description, ' ', $length);
-					$description = substr($description, 0, $pos);
-				}
-				$description = $description_title.$description.$complementary_description;
-				$new_item = array(
-					'title' => $title,
-					'category_id' => $category_info['category_id'],
-					'domain_id' => $category_info['domain'],
-					'price' => $this->set_price($item->weight,$item->price),
-					'currency_id' => $category_info['currency'],
-					'available_quantity' => $avaliable_quantity,
-					'buying_mode' => $category_info['buying_mode'],
-					'listing_type_id' => 'gold_special',
-					'condition' => 'new',
-					'description' => array('plain_text' => $description),
-					'warranty' => $item->warranty,
-					'pictures' => $pictures,
-					'seller_custom_field' => $item->sku,
-					'shipping' => $shipping
-				);
-				$validation = $this->validate($new_item);
-				if(!is_null($validation)){
-					echo "$k - item no created wrong validation\n";
-				}else{
-					$meli_item = $this->create($new_item);
-					if (isset($meli_item->id)) {
-						$mpid = $meli_item->id;
-						$title = $meli_item->title;
-						$seller_id = $meli_item->seller_id;
-						$category_id = $meli_item->category_id;
-						$price = $meli_item->price;
-						$base_price = $meli_item->base_price;
-						$sold_quantity = $meli_item->sold_quantity;	     
-						$start_time = $meli_item->start_time;
-						$stop_time = $meli_item->stop_time;
-						$permalink = $meli_item->permalink;
-						$status = $meli_item->status;
-						$aws_id = $item->id;
-						$automatic_relist = $meli_item->automatic_relist;
-						$date_created = $meli_item->date_created;
-						$last_updated = $meli_item->last_updated;
-						$shop_id = $this->shop_detail->id;
-						$create_date = date('Y-m-d h:i:s');
-						$update_date = date('Y-m-d h:i:s');
-						$sql = "INSERT INTO meli_items(
-						mpid, title, seller_id, category_id, price, base_price, sold_quantity, 
-						start_time, stop_time, permalink, status, 
-						aws_id, automatic_relist, date_created, last_updated, shop_id, 
-						create_date, update_date) VALUES ('$mpid', '$title', '$seller_id', '$category_id', '$price', '$base_price', '$sold_quantity', '$start_time', '$stop_time', '$permalink', '$status', '$aws_id', '$automatic_relist', '$date_created', '$last_updated', '$shop_id', '$create_date', '$update_date');";
-						$result_insert = pg_query($sql);
-						if ($result_insert > 0) {
-							echo "$k - item $mpid create at $create_date\n";
-						}else{
-							echo "$k - item $mpid not create at DB\n";					    
-						}
+					$shipping = array();
+					if($category_info['shipping_mode'] == 'me2'){
+						$shipping = array('mode'    => 'me2', 
+						                  'local_pick_up'    => false, 
+						                  'free_shipping'    => true ,
+						                  'free_methods' => array(),
+						                  'tags' => array('mandatory_free_shipping'));
 					}else{
-						echo "$k - item no created\n";
+						$costos = array();
+						array_push($costos, array('description' => 'Pagar el Envío en mi Domicilio', 'cost' => 1));
+						$shipping = array('mode'    => 'custom', 
+						                  'local_pick_up'    => false, 
+						                  'free_shipping'    => false , 
+						                  'costs' => $costos);
 					}
+					$avaliable_quantity = ($item->avaliable_quantity == 0) ? 3:$item->avaliable_quantity;
+					$title = $this->scratch->change_simbols($item->title);
+					$description = str_replace(".-", "\n", $this->scratch->change_simbols($item->description));
+					$length = ($category_info['max_description_length'] - strlen($complementary_description)) -1; 
+					$length_title = $category_info['max_title_length'] -1;
+					if (strlen($title) >= $length_title) {
+						$pos   = strrpos($title,' ', $length_title);
+						if ($pos > $length_title) {
+							$pos -= $pos - $length_title;
+						}
+						$title = substr($title, 0, $pos);
+					}
+					if (strlen($description) >= $length) {
+						$pos   = strpos($description, ' ', $length);
+						$description = substr($description, 0, $pos);
+					}
+					$description = $description_title.$description.$complementary_description;
+					$new_item = array(
+						'title' => $title,
+						'category_id' => $category_info['category_id'],
+						'domain_id' => $category_info['domain'],
+						'price' => $this->set_price($item->weight,$item->price),
+						'currency_id' => $category_info['currency'],
+						'available_quantity' => $avaliable_quantity,
+						'buying_mode' => $category_info['buying_mode'],
+						'listing_type_id' => 'gold_special',
+						'condition' => 'new',
+						'description' => array('plain_text' => $description),
+						'warranty' => $item->warranty,
+						'pictures' => $pictures,
+						'seller_custom_field' => $item->sku,
+						'shipping' => $shipping
+					);
+					$validation = $this->validate($new_item);
+					if(!is_null($validation)){
+						echo "$k - item no created wrong validation\n";
+					}else{
+						$meli_item = $this->create($new_item);
+						if (isset($meli_item->id)) {
+							$mpid = $meli_item->id;
+							$title = $meli_item->title;
+							$seller_id = $meli_item->seller_id;
+							$category_id = $meli_item->category_id;
+							$price = $meli_item->price;
+							$base_price = $meli_item->base_price;
+							$sold_quantity = $meli_item->sold_quantity;	     
+							$start_time = $meli_item->start_time;
+							$stop_time = $meli_item->stop_time;
+							$permalink = $meli_item->permalink;
+							$status = $meli_item->status;
+							$aws_id = $item->id;
+							$automatic_relist = $meli_item->automatic_relist;
+							$date_created = $meli_item->date_created;
+							$last_updated = $meli_item->last_updated;
+							$shop_id = $this->shop_detail->id;
+							$create_date = date('Y-m-d h:i:s');
+							$update_date = date('Y-m-d h:i:s');
+							$sql = "INSERT INTO meli_items(
+							mpid, title, seller_id, category_id, price, base_price, sold_quantity, 
+							start_time, stop_time, permalink, status, 
+							aws_id, automatic_relist, date_created, last_updated, shop_id, 
+							create_date, update_date) VALUES ('$mpid', '$title', '$seller_id', '$category_id', '$price', '$base_price', '$sold_quantity', '$start_time', '$stop_time', '$permalink', '$status', '$aws_id', '$automatic_relist', '$date_created', '$last_updated', '$shop_id', '$create_date', '$update_date');";
+							$result_insert = pg_query($sql);
+							if ($result_insert > 0) {
+								echo "$k - item $mpid create at $create_date\n";
+							}else{
+								echo "$k - item $mpid not create at DB\n";					    
+							}
+						}else{
+							echo "$k - item no created\n";
+						}
 
+					}
 				}
 				$k++;
 			}
@@ -458,7 +460,7 @@ class Meli
 			$complementary_description .= "• Se puede realizar la devolución del producto en un periodo máximo de 5 días hábiles a partir de la entrega.";
 			$complementary_description .= "\n";
 			$complementary_description .= "• Los costos de retorno hacia los Estados Unidos son asumidos por el COMPRADOR, este varía de acuerdo con el peso y/o volumen del producto y no es reembolsable.";
-
+			$k = 1;
 			while ($item = pg_fetch_object($result)) {
 				$category_info = $this->search_category($item->category_id);
 				$avaliable_quantity = ($item->avaliable_quantity == 0) ? 3:$item->avaliable_quantity;
@@ -482,8 +484,8 @@ class Meli
 					'available_quantity' => $avaliable_quantity
 				);
 				$update = $this->banner($item->mpid,array('plain_text' => $description));
-				print_r($update);
-				#print_r($this->update($item->mpid, $update_item));
+				$update_item = $this->update($item->mpid, $update_item);
+				echo "$k - item $update_item->id\n";
 			}
 
 		}
@@ -495,4 +497,5 @@ class Meli
 	#echo $t->set_price(34,1049.99);
 	$category = " Productos de oficina, categorías, artículos escolares y de oficina, accesorios de escritorio y organizadores del área de trabajo, alfombrillas para ratón y reposamuñecas, alfombrillas para ratón                                                       ";
 	#$category_id = $t->search_category($category);
-	$t->newItem();
+	#$t->newItem();
+	$t->updateItem();
