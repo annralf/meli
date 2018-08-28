@@ -332,6 +332,7 @@ class Meli
 			$k = 1;
 			$complementary_description = $delivery_time.$complementary_description;
 			while ($item = pg_fetch_object($result)) {
+				$description =  "";
 				$category_info = $this->search_category($item->category_id);
 				if(isset($category_info)){					
 					$images      = explode("~^~", $item->pictures);
