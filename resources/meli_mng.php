@@ -464,7 +464,6 @@ class Meli
 			while ($item = pg_fetch_object($result)) {
 				$category_info = $this->search_category($item->category_id);
 				$avaliable_quantity = ($item->avaliable_quantity == 0) ? 3:$item->avaliable_quantity;
-				$title = $this->scratch->change_simbols($item->title);
 				$description = str_replace(".-", "\n", $this->scratch->change_simbols($item->description));
 				$complementary_description = $delivery_time.$complementary_description;
 				$length = ($category_info['max_description_length'] - (strlen($complementary_description) + strlen($description_title))) -1; 
@@ -485,6 +484,7 @@ class Meli
     				    echo "$k - item $item->mpid - not updated\n";
 				    print_r($update_item);
 				}
+			    $k++;
 			}
 
 		}
