@@ -166,6 +166,7 @@ class Meli
 			$result = pg_query($sql);
 			$match_weight = 0;
 			$feed_price = 0;
+			$tax_price = 0;
 	    #Range 1 weight from 0 to 500
 			if ($weight > 0 && $weight <= $range_1) {
 				$weight += $this->shop_detail->range_1;
@@ -188,9 +189,18 @@ class Meli
 					$feed_price = $feed->price;
 				}
 			}
+		    
 	    #final price 
-			$sub_final_price = ceil(($base_price + $feed_price)*1.10);
-			$final_price = ceil($sub_final_price*$this->shop_detail->price_cop);
+			$sub_final_price = ceil(($base_price + $feed_price)*1.31);
+		    #tax price
+		    if ($weight > 1000 && $sub_final_price < 200) {
+		    	$tax_price = 0.10;
+		    }
+		    if($weight > 1000 && $sub_final_price > 200){
+			$tax_price = 0.29;
+		    }
+			$final_price_COP = ceil($sub_final_price*$this->shop_detail->price_cop);
+			$final_price = ceil($final_price_COP + ($final_price_COP*$tax_price));
 			return $final_price;
 		}
 
@@ -233,6 +243,20 @@ class Meli
 			$validation = json_decode(curl_exec($ch));
 			curl_close($ch);
 			return $validation;
+		}
+
+		public function getRecentOrders() {
+			$access_token = $this->shop_detail->access_token;
+			$seller_id = $this->shop_detail->user_id;
+			$orders_url = "https://api.mercadolibre.com/orders/search?seller=$seller_id&order.status=confirmed&access_token=$access_token";
+			$ch             = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $orders_url);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
+			$orders = json_decode(curl_exec($ch));
+			curl_close($ch);
+			return $orders->results;
 		}
 		public function update($item_id, $item) {
 			$update_url = "https://api.mercadolibre.com/items/".$item_id."?access_token=".$this->shop_detail->access_token;
@@ -301,6 +325,19 @@ class Meli
 			$show = json_decode(curl_exec($ch));
 			curl_close($ch);
 			return $show;
+		}
+		public function message($message)
+		{
+			$url = "https://api.mercadolibre.com/messages?access_token=".$this->shop_detail->access_token;
+			$ch             = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($message));
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
+			$response = json_decode(curl_exec($ch));
+			return $response;
 		}
 		public function newItem(){
 			$this->connect;
@@ -432,7 +469,7 @@ class Meli
 
 					}
 				}else{
-				    echo "$k - not category at $item->sku\n";
+					echo "$k - not category at $item->sku\n";
 				}
 				$k++;
 			}
@@ -464,6 +501,9 @@ class Meli
 			$complementary_description .= "• Se puede realizar la devolución del producto en un periodo máximo de 5 días hábiles a partir de la entrega.";
 			$complementary_description .= "\n";
 			$complementary_description .= "• Los costos de retorno hacia los Estados Unidos son asumidos por el COMPRADOR, este varía de acuerdo con el peso y/o volumen del producto y no es reembolsable.";
+			$complementary_description .= "\n";
+			$complementary_description .= "\n";
+			$complementary_description .= "Nagasaki Imports";
 			$complementary_description = $delivery_time.$complementary_description;
 			$k = 1;
 			while ($item = pg_fetch_object($result)) {
@@ -484,14 +524,56 @@ class Meli
 				$update = $this->banner($item->mpid,array('plain_text' => $description));
 				$update_item = $this->update($item->mpid, $update_item);
 				if (isset($update_item->id)) {
-    				    echo "$k - item $update_item->id\n";
+					echo "$k - item $update_item->id\n";
 				}else{
-    				    echo "$k - item $item->mpid - not updated\n";
-				    print_r($update_item);
+					echo "$k - item $item->mpid - not updated\n";
+					print_r($update_item);
 				}
-			    $k++;
+				$k++;
 			}
 
+		}
+
+		public function sendMessage(){
+			$orders = $this->getRecentOrders();
+			$subject = "NAGASAKI IMPORTS";
+			$message_header = "Tu número de órden es:#";
+			$message = "Estimado Cliente,";
+			$message .= "\n";
+			$message .= "\n";
+			$message .= "Tenemos el placer de informarle que hemos recibido su órden de compra. Desde el momento de compra, recibirá su producto en un lapsp de 10 a 15 días hábiles. Dicho lapso de espera es debido a los trámites de importación que deben ser cumplidos.";
+			$message .= "\n";
+			$message .= "El paquete luego de ser procesado por Aduanas arrivará a nuestras oficinas e inmediatamente le será enviado mediante Correos 4-72. Al momento de realizar el envío le escribiremos nuevamente para informarle el número de rastreo.";
+			$message .= "\n";
+			$message .= "Con el objetivo de garantizar la entrega segura del producto, agradeceríamos si pudiera responder a este mensaje confirmando su dirección actual de envío y su código postal.";
+			$message .= "\n";
+			$message .= "\n";
+			$message .= "Gracias por su compra.";
+			$message .= "\n";
+			$message .= "Atentamente,";
+			$message .= "\n";
+			$message .= "Alfredo M.";
+			$message .= "\n";
+			$message .= "Asesor Comercial de Nagasaki Imports";
+			foreach ($orders as $key) {
+				$message_final = "$message_header$key->id \n $message";
+				$messages_structure = array(
+					'from'=>array(
+						'user_id'=> $this->shop_detail->user_id
+					),
+					'to' =>array(array(
+						'user_id'=> $key->buyer->id,
+						'resource' => 'orders',
+						'resource_id' =>$key->id,
+						'site_id' => 'MCO'
+					)),
+					'subject' => $subject,
+					'text' =>array(
+						'plain' => $message_final
+					));
+				$message_final = "";
+				$this->message($messages_structure);
+			}
 		}
 
 
@@ -501,5 +583,6 @@ class Meli
 	#echo $t->set_price(34,1049.99);
 	$category = " Productos de oficina, categorías, artículos escolares y de oficina, accesorios de escritorio y organizadores del área de trabajo, alfombrillas para ratón y reposamuñecas, alfombrillas para ratón                                                       ";
 	#$category_id = $t->search_category($category);
-	$t->newItem();
-	#$t->updateItem();
+	$t->updateItem();
+	#print_r($t->getRecentOrders());
+	#$t->sendMessage();
