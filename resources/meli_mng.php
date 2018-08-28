@@ -417,8 +417,8 @@ class Meli
 						start_time, stop_time, permalink, status, 
 						aws_id, automatic_relist, date_created, last_updated, shop_id, 
 						create_date, update_date) VALUES ('$mpid', '$title', '$seller_id', '$category_id', '$price', '$base_price', '$sold_quantity', '$start_time', '$stop_time', '$permalink', '$status', '$aws_id', '$automatic_relist', '$date_created', '$last_updated', '$shop_id', '$create_date', '$update_date');";
-						$result = pg_query($sql);
-						if ($result > 0) {
+						$result_insert = pg_query($sql);
+						if ($result_insert > 0) {
 							echo "$k - item $mpid create at $create_date\n";
 						}else{
 							echo "$k - item $mpid not create at DB\n";					    
