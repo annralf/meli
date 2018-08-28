@@ -189,16 +189,16 @@ class Meli
 					$feed_price = $feed->price;
 				}
 			}
-		    
+
 	    #final price 
-			$sub_final_price = ceil(($base_price + $feed_price)*1.31);
+			$sub_final_price = ceil($base_price + $feed_price + (($base_price + $feed_price)*1.31));
 		    #tax price
-		    if ($weight > 1000 && $sub_final_price < 200) {
-		    	$tax_price = 0.10;
-		    }
-		    if($weight > 1000 && $sub_final_price > 200){
-			$tax_price = 0.29;
-		    }
+			if ($weight > 1000 && $sub_final_price < 200) {
+				$tax_price = 0.10;
+			}
+			if($weight > 1000 && $sub_final_price > 200){
+				$tax_price = 0.29;
+			}
 			$final_price_COP = ceil($sub_final_price*$this->shop_detail->price_cop);
 			$final_price = ceil($final_price_COP + ($final_price_COP*$tax_price));
 			return $final_price;
