@@ -38,6 +38,7 @@ class aws_mng
 				if(isset($result_aws)){
 					foreach ($result_aws as $aws_result) {
 						$date = date('Y-m-d h:i:s');
+						$sku = $aws_result['asin'];
 						switch ($aws_result['notavaliable']) {
 							case 0:
 							case 1:
@@ -95,8 +96,9 @@ class aws_mng
 							break;
 
 							case 2:
-							$sql_statement = "UPDATE aws_sku SET active = 'false'";
+							$sql_statement = "UPDATE aws_sku SET active = 'false' WHERE  sku =  '$sku'";
 							$var = 2;
+							$val = 3;
 							break;
 						}
 						$result_query = pg_query($sql_statement);
@@ -109,6 +111,10 @@ class aws_mng
 							case 1:
 							$type_ok = "Creado con éxito";
 							$type_bad = "No se pudo Insertar";
+							break;
+							case 3:
+							$type_ok = "Not avaliable";
+							$type_bad = "No se pudo actualizar";
 							break;
 						}
 						if ($result_query > 0) {
