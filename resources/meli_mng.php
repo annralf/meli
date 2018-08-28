@@ -498,5 +498,5 @@ class Meli
 	#echo $t->set_price(34,1049.99);
 	$category = " Productos de oficina, categorías, artículos escolares y de oficina, accesorios de escritorio y organizadores del área de trabajo, alfombrillas para ratón y reposamuñecas, alfombrillas para ratón                                                       ";
 	#$category_id = $t->search_category($category);
-	#$t->newItem();
-	$t->updateItem();
+	$t->newItem();
+	#$t->updateItem();
