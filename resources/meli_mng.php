@@ -141,7 +141,7 @@ class Meli
 			    );
 			}else{
 			    $category_info = array(
-				    'category_id' => $category_info->id,
+				    'category_id' => $category_id_final,
 				    'buying_mode' => 'buy_it_now',
 				    'shipping_mode' => 'me2',
 				    'currency' => 'COP',
@@ -305,7 +305,7 @@ class Meli
 		public function newItem(){
 			$this->connect;
 			$id = $this->shop_detail->id;
-			$sql = "select * from meli_item_detail where id not in (select aws_id from meli_items where shop_id = $id) limit 100";
+			$sql = "select * from meli_item_detail where id not in (select aws_id from meli_items where shop_id = $id)";
 			$result = pg_query($sql);
 			$description_title = "DESCRIPCION DEL PRODUCTO";
 			$description_title .= "\n";
