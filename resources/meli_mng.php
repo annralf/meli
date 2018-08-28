@@ -305,7 +305,7 @@ class Meli
 		public function newItem(){
 			$this->connect;
 			$id = $this->shop_detail->id;
-			$sql = "select * from meli_item_detail where id not in (select aws_id from meli_items where shop_id = $id) limit 2";
+			$sql = "select * from meli_item_detail where id not in (select aws_id from meli_items where shop_id = $id)";
 			$result = pg_query($sql);
 			$description_title = "DESCRIPCION DEL PRODUCTO";
 			$description_title .= "\n";
