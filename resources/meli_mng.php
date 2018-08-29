@@ -217,19 +217,6 @@ class Meli
 			return $validation;
 		}
 
-		public function validateCategory_by_user($category_id) {
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, 'https://api.mercadolibre.com/users/'.$this->user_name.'/shipping_modes?category_id='.$category_id);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
-
-			$validation = json_decode(curl_exec($ch));
-			curl_close($ch);
-
-			return $validation;
-		}
-
 		public function validate($item) {
 			$validation_url = "https://api.mercadolibre.com/items/validate?access_token=".$this->shop_detail->access_token;
 			$ch             = curl_init();
@@ -325,6 +312,28 @@ class Meli
 			$show = json_decode(curl_exec($ch));
 			curl_close($ch);
 			return $show;
+		}
+
+		public function paused_item($status, $mpid, $type) {
+			$temp = array();
+			if ($status != "closed") {
+				$result = $this->update($mpid, array('status' => 'paused'));
+			}
+			return 1;
+		}
+
+		public function delete_item($status, $mpid, $type) {
+			$temp = array();
+			if ($type == "delete_item") {
+				$this->update($mpid, array('deleted' => 'true'));
+				$this->conn->exec("DELETE from meli.items where mpid ='".$mpid."';");
+
+			} else {
+				if ($status != "closed") {
+					$result = $this->update($mpid, array('status' => 'closed'));
+				}
+			}
+			return 1;
 		}
 		public function message($message)
 		{
@@ -477,7 +486,7 @@ class Meli
 		public function updateItem(){
 			$this->connect;
 			$id = $this->shop_detail->id;
-			$sql = "SELECT * FROM meli_item_update WHERE shop_id = $id;";
+			$sql = "SELECT * FROM meli_item_update WHERE price = 0;";
 			$result = pg_query($sql);
 			$description_title = "DESCRIPCION DEL PRODUCTO";
 			$description_title .= "\n";
@@ -509,7 +518,11 @@ class Meli
 			while ($item = pg_fetch_object($result)) {
 				$category_info = $this->search_category($item->category_id);
 				$description =  "";
-				$avaliable_quantity = ($item->avaliable_quantity == 0) ? 3:$item->avaliable_quantity;
+				if ($item->price == 0) {
+					$avaliable_quantity = 0;	
+				}else{
+					$avaliable_quantity = ($item->avaliable_quantity == 0) ? 3:$item->avaliable_quantity;			
+				}
 				$description = str_replace(".-", "\n", $this->scratch->change_simbols($item->description));
 				$length = ($category_info['max_description_length'] - (strlen($complementary_description) + strlen($description_title))) -1; 
 				if (strlen($description) >= $length) {
@@ -541,7 +554,7 @@ class Meli
 			$message = "Estimado Cliente,";
 			$message .= "\n";
 			$message .= "\n";
-			$message .= "Tenemos el placer de informarle que hemos recibido su órden de compra. Desde el momento de compra, recibirá su producto en un lapsp de 10 a 15 días hábiles. Dicho lapso de espera es debido a los trámites de importación que deben ser cumplidos.";
+			$message .= "Tenemos el placer de informarle que hemos recibido su órden de compra. Desde el momento de compra, recibirá su producto en un lapso de 10 a 15 días hábiles. Dicho lapso de espera es debido a los trámites de importación que deben ser cumplidos.";
 			$message .= "\n";
 			$message .= "El paquete luego de ser procesado por Aduanas arrivará a nuestras oficinas e inmediatamente le será enviado mediante Correos 4-72. Al momento de realizar el envío le escribiremos nuevamente para informarle el número de rastreo.";
 			$message .= "\n";

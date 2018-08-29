@@ -35,25 +35,45 @@
 .dasboard_base {
   background-color: #dff2ff;
   width: 99%;
+  height: 100vh;
   margin-left: 5px !important; }
 
 .main_card {
-  background-color: red;
   height: 57vh;
   width: 100%;
-  margin-right: 15px;
-  margin-left: 20px; }
+  margin-right: 15px !important;
+  margin-left: 20px !important;
+  text-align: center;
+  box-shadow: 2px 2px 11px #545a5f; }
+  .main_card .counter {
+    font-size: 4em;
+    margin-bottom: 0px; }
+  .main_card .logo {
+    color: #0e00e8;
+    font-size: 3em; }
+  .main_card .ref > a {
+    color: black; }
 
 .secundary_card {
-  background-color: pink;
   height: 57vh;
   width: 100%;
-  padding-left: 30px; }
+  box-shadow: 2px 2px 11px #545a5f; }
+  .secundary_card hr {
+    width: 70%; }
   .secundary_card .row {
     width: 98%;
     height: 25vh;
-    background-color: green;
-    margin-top: 12px; }
+    margin-top: 12px;
+    text-align: center; }
+    .secundary_card .row .counter {
+      font-size: 2em;
+      margin: 0px; }
+    .secundary_card .row .logo {
+      color: #0e00e8;
+      font-size: 2em;
+      margin: 0px; }
+    .secundary_card .row .ref > a {
+      color: black; }
     .secundary_card .row .col {
       height: 100%; }
 
@@ -72,5 +92,26 @@
     margin-right: 30px; }
     .collapsible li .collapsible-body {
       background-color: white; }
+
+.user_info {
+  position: absolute;
+  top: -34px;
+  right: 86px;
+  color: white; }
+
+.collapsible li {
+  width: 14vw !important; }
+.collapsible .collapsible-body {
+  width: 70vw;
+  position: absolute;
+  background-color: yellow;
+  left: 12%;
+  z-index: 10; }
+  .collapsible .collapsible-body form textarea {
+    height: 30vh; }
+
+#table_aws_wrapper, #table_meli_wrapper {
+  width: 80vw;
+  margin-left: 4%; }
 
 /*# sourceMappingURL=custom.css.map */

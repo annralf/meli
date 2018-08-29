@@ -4,68 +4,173 @@
 	<title>Nagasaki Import - Gestor de Tienda</title>
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 	<link rel="icon" href="img/favicon.ico" type="image/x-icon">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha256-NuCn4IvuZXdBaFKJOAcsU2Q3ZpwbdFisd5dux4jkQ5w=" crossorigin="anonymous" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css" />
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" href="css/custom.css" />
 </head>
 <body>
 
-<div class="container">
-	<div class="row nav_dashboard">
-		<div class="dashboard_logo">
-			<img  class="" src="img/logo.png">
-		</div>
-	</div>
-	<div class="row dasboard_base">
-		<div class="row">
-			<div class="col s6 m6 l6" style="display: inline-flex;">
-				<div class="row main_card"></div>
-				<div class="row secundary_card">
-						<div class="row"></div>
-						<div class="row"></div>
-				</div>
+	<div class="container">
+		<div class="row nav_dashboard">
+			<div class="dashboard_logo">
+				<img  class="" src="img/logo.png">
 			</div>
-			<div class="col s6 m6 l6" style="display: inline-flex;">
-				<div class="row main_card"></div>
-				<div class="row secundary_card">
-						<div class="row"></div>
+			<dir class="user_info">
+				<h2>Bienvenido Alfredo</h2>
+			</dir>
+		</div>
+		<div class="row dasboard_base">
+			<div class="row">
+				<div class="col s6 m6 l6" style="display: inline-flex;">
+					<div class="row main_card">
+						<p class="counter counter_aws_items">12K</p>
+						<b class="title">ítems creados</b>
+						<p class="logo"><i class="fa fa-amazon" aria-hidden="true"></i></p>
+						<p class="ref"><a href="">Ver detalle</a></p>
+					</div>
+					<div class="row secundary_card">
 						<div class="row">
-							<div class="col s6"></div>
-							<div class="col s6"></div>
+							<p class="counter counter_aws_items_prime">12K</p>
+							<b class="title">ítems Prime</b>
+							<p class="logo"><i class="fa fa-check-circle" aria-hidden="true"></i></p>
+							<p class="ref"><a href="">Ver detalle</a></p>
 						</div>
+						<hr>
+						<div class="row">
+							<p class="counter counter_aws_items_no_prime">12K</p>
+							<b class="title">ítems No Prime</b>
+							<p class="logo"><i class="fa fa-exclamation-circle" aria-hidden="true"></i></p>
+							<p class="ref"><a href="">Ver detalle</a></p>
+						</div>
+					</div>
+				</div>
+				<div class="col s6 m6 l6" style="display: inline-flex;">
+					<div class="row main_card">
+						<p class="counter counter_meli_items">12K</p>
+						<b class="title">ítems creados en MercadoLibre</b>
+						<p class="logo"><i class="fa fa-cart-plus" aria-hidden="true"></i></p>
+						<p class="ref"><a href="">Ver detalle</a></p>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="row graphic_base">
-			<div class="col s6 m6 l6">
+			<div class="row action_buttons">
+				<ul class="collapsible">
+					<li>
+						<div class="collapsible-header"><i class="material-icons">monetization_on</i>Precio</div>
+						<div class="collapsible-body">
+							<form>
+								<input type="text" class="validate" name="dollar_price" id="dollar_price">
+								<button class="btn">Actualizar</button>
+							</form>
+						</div>
+					</li>
+					<li>
+						<div class="collapsible-header"><i class="material-icons">subject</i>Descripción</div>
+						<div class="collapsible-body">
+							<form>
+								<label for ="product_description_dt">Detalle de tiempo de entrega:</label>
+								<textarea class="validate" id="product_description_dt" rows="30" ></textarea>
+								<label for ="product_description_ai">Información adicional:</label>
+								<textarea class="validate" id="product_description_ai" rows="30" ></textarea>
+								<label for ="product_description_dd">Información de envíos:</label>
+								<textarea class="validate" id="product_description_dd" rows="30" ></textarea>
+								<label for ="product_description_rp">Información en caso de devolución:</label>
+								<textarea class="validate" id="product_description_rp" rows="30" ></textarea>
+								<button class="btn">Actualizar</button>
+							</form>
+						</div>
+					</li>
+					<li>
+						<div class="collapsible-header"><i class="material-icons">warning</i>Garantía</div>
+						<div class="collapsible-body">
+							<form>
+								<textarea class="validate" id="product_warrant" rows="30"></textarea>
+								<button class="btn">Actualizar</button>
+							</form>
+						</div>
+					</li>
+					<li>
+						<div class="collapsible-header"><i class="material-icons">insert_comment</i>Mensaje</div>
+						<div class="collapsible-body">
+							<form>
+								<label for ="message_body">Mensaje:</label>
+								<textarea class="validate" id="message_body" rows="30" ></textarea>
+								<label for ="message_body">Mensaje:</label>
+								<textarea class="validate" id="message_body" rows="30" ></textarea>
+								<label for ="message_subject">Remitente:</label>
+								<textarea class="validate" id="message_subject" rows="30" ></textarea>
+								<label for ="message_subject_position">Cargo del remitente:</label>
+								<textarea class="validate" id="message_subject_position" rows="30" ></textarea>
+								<button class="btn">Actualizar</button>
+							</form>
+						</div>
+					</li>
+					<li>
+						<div class="collapsible-header"><i class="material-icons">search</i>Palabras claves</div>
+						<div class="collapsible-body">
+							<div class="chips chips-initial"></div>
+							<button class="btn key_words">Actualizar</button>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="row tables">
+				<table id="table_aws" class="display">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Sku</th>
+							<th>Titulo</th>
+							<th>Precio</th>
+							<th>Link</th>
+							<th>Última actualización</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+				<table id="table_meli" class="display">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Id</th>
+							<th>Titulo</th>
+							<th>Precio</th>
+							<th>Link</th>
+							<th>Última actualización</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
 			</div>
 		</div>
-		<div class="row action_buttons">
-			<ul class="collapsible">
-			    <li>
-			      <div class="collapsible-header"><i class="material-icons">monetization_on</i>Precio</div>
-			      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-			    </li>
-			    <li>
-			      <div class="collapsible-header"><i class="material-icons">subject</i>Descripción</div>
-			      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-			    </li>
-			    <li>
-			      <div class="collapsible-header"><i class="material-icons">warning</i>Garantía</div>
-			      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-			    </li>
-			  </ul>
-		</div>
 	</div>
-</div>
 
 </body>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js" integrity="sha256-uWtSXRErwH9kdJTIr1swfHFJn/d/WQ6s72gELOHXQGM=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
 <script type="text/javascript">
-	 $(document).ready(function(){
-	    $('.collapsible').collapsible();
-	  });
+	$(document).ready(function(){
+		initial();
+		var test ="{tag: 'Apple',}, {tag: 'Microsoft',}, {tag: 'Google',}";
+		$('.collapsible').collapsible();
+		 $('#table_aws').DataTable();
+		 $('#table_meli').DataTable();
+		var data = M.Chips.getInstance($('.chips').chips({data: [{tag: 'Apple',}, {tag: 'Microsoft',}, {tag: 'Google',}],}));
+		$('.key_words').click(function(){
+			//data.addChip({tag:'test'});
+			for(var i in data.chipsData){
+				console.log(data.chipsData[i].tag);				
+			}
+			console.log('log');
+		});
+	});
 </script>
 </html>

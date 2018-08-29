@@ -25,46 +25,81 @@
 }
 
 .dashboard_logo{
-    background-color:  white;
-    position:  absolute;
-    top: 20px;
-    left: 100px;
-    border-radius: 50%;
-    height:  100px;
-    width:  100px;
+	background-color:  white;
+	position:  absolute;
+	top: 20px;
+	left: 100px;
+	border-radius: 50%;
+	height:  100px;
+	width:  100px;
 	box-shadow: 2px 2px 11px #545a5f;
-	 img{
-	    position: relative;
-	    width: 85px;
-	    padding-top: 15%;
-	    padding-left: 18%;
+	img{
+		position: relative;
+		width: 85px;
+		padding-top: 15%;
+		padding-left: 18%;
 	}
 }
 
 .dasboard_base{
 	background-color: #dff2ff;
-    width: 99%;
-    margin-left:  5px !important;
+	width: 99%;
+	height: 100vh;
+	margin-left:  5px !important;
 }
 
 .main_card{
-	background-color: red;
 	height: 57vh;
- 	width: 100%;
-	margin-right:  15px;
-	margin-left:  20px;
+	width: 100%;
+	margin-right:  15px !important;
+	margin-left:  20px !important;
+	text-align: center;
+	    box-shadow: 2px 2px 11px #545a5f;
+
+	.counter{
+		font-size: 4em;
+		margin-bottom: 0px;
+	}
+	.title{
+
+	}
+	.logo{
+		color: #0e00e8;
+		font-size: 3em;
+	}
+	.ref>a{
+		color: black;
+	}
 }
 
 .secundary_card{
-	background-color: pink;
 	height: 57vh;
 	width: 100%;
-	padding-left:  30px;
+    box-shadow: 2px 2px 11px #545a5f;
+    hr{
+    	width: 70%;
+    }
+
 	.row{
 		width: 98%;
 		height: 25vh;
-		background-color: green;
 		margin-top:  12px;
+		text-align: center;
+		.counter{
+			font-size: 2em;
+			margin: 0px;
+		}
+		.title{
+
+		}
+		.logo{
+			color: #0e00e8;
+			font-size: 2em;
+			margin: 0px;
+		}
+		.ref>a{
+			color: black;
+		}
 		.col{
 			height: 100%;
 		}
@@ -87,4 +122,34 @@
 			background-color: white;
 		}
 	}
+}
+
+.user_info{
+	position:  absolute;
+	top: -34px;
+	right:  86px;
+	color:  white;
+}
+
+.collapsible{
+	li{
+		width: 14vw !important;
+	}
+	.collapsible-body{
+		width: 70vw; 
+		position: absolute; 
+		background-color: yellow; 
+		left: 12%; 
+		z-index: 10;
+		form{
+			textarea{
+				height: 30vh;
+			}
+		}
+	}
+}
+
+#table_aws_wrapper, #table_meli_wrapper{
+	width: 80vw;
+	margin-left: 4%;
 }
