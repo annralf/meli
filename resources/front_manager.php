@@ -26,7 +26,7 @@ switch ($_POST['action']) {
 		}
 		echo json_encode(array('result'=>$table));
 		break;	    	
-		default:
+		case 'counter':
 		$sql = "SELECT COUNT(*) FROM aws_items;";
 		$result = pg_fetch_object(pg_query($sql));
 		$counter = $result->count;
@@ -66,7 +66,7 @@ switch ($_POST['action']) {
 		break;
 	}
 	break;	    	
-	default:
+	case 'counter':
 	$sql = "SELECT COUNT(*) FROM aws_items WHERE is_prime='1';";
 	$result = pg_fetch_object(pg_query($sql));
 	$counter = $result->count;
@@ -102,7 +102,7 @@ switch ($_POST['action']) {
 		}
 		echo json_encode(array('result'=>$table));
 		break;
-		default:
+		case 'counter':
 		$sql = "SELECT COUNT(*) FROM aws_items WHERE is_prime='0';";
 		$result = pg_fetch_object(pg_query($sql));
 		$counter = $result->count;
@@ -141,7 +141,7 @@ switch ($_POST['action']) {
 		}
 		echo json_encode(array('result'=>$table));
 		break;
-		default:
+		case 'counter':
 		$sql = "SELECT COUNT(*) FROM meli_items;";
 		$result = pg_fetch_object(pg_query($sql));
 		$counter = $result->count;
