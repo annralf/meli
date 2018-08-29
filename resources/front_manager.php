@@ -1,8 +1,7 @@
 <?php
-require_once 'meli_mng.php';
+require_once 'db_mng.php';
 
 $conn = new DataBase();
-$meli = new Meli(1);
 
 switch ($_POST['action']) {
 	case 'get_aws_items':
