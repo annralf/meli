@@ -1,7 +1,7 @@
 <?php
 require_once 'db_mng.php';
 
-$conn = new DataBase();
+$conn = new Connect();
 
 switch ($_POST['action']) {
 	case 'get_aws_items':
