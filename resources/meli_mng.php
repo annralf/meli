@@ -554,26 +554,11 @@ class Meli
 		}
 
 		public function sendMessage(){
+			$result = pg_fetch_object(pg_query("SELECT * FROM system_msg_meli_order;"));
 			$orders = $this->getRecentOrders();
 			$subject = "NAGASAKI IMPORTS";
 			$message_header = "Tu número de órden es:#";
-			$message = "Estimado Cliente,";
-			$message .= "\n";
-			$message .= "\n";
-			$message .= "Tenemos el placer de informarle que hemos recibido su órden de compra. Desde el momento de compra, recibirá su producto en un lapso de 10 a 15 días hábiles. Dicho lapso de espera es debido a los trámites de importación que deben ser cumplidos.";
-			$message .= "\n";
-			$message .= "El paquete luego de ser procesado por Aduanas arrivará a nuestras oficinas e inmediatamente le será enviado mediante Correos 4-72. Al momento de realizar el envío le escribiremos nuevamente para informarle el número de rastreo.";
-			$message .= "\n";
-			$message .= "Con el objetivo de garantizar la entrega segura del producto, agradeceríamos si pudiera responder a este mensaje confirmando su dirección actual de envío y su código postal.";
-			$message .= "\n";
-			$message .= "\n";
-			$message .= "Gracias por su compra.";
-			$message .= "\n";
-			$message .= "Atentamente,";
-			$message .= "\n";
-			$message .= "Alfredo M.";
-			$message .= "\n";
-			$message .= "Asesor Comercial de Nagasaki Imports";
+			$message = htmlspecialchars_decode($result->body_msg);
 			foreach ($orders as $key) {
 				$message_final = "$message_header$key->id \n $message";
 				$messages_structure = array(
@@ -597,11 +582,3 @@ class Meli
 
 
 	}
-/*
-	$t = new Meli(1);
-	#echo $t->set_price(34,1049.99);
-	$category = " Productos de oficina, categorías, artículos escolares y de oficina, accesorios de escritorio y organizadores del área de trabajo, alfombrillas para ratón y reposamuñecas, alfombrillas para ratón                                                       ";
-	#$category_id = $t->search_category($category);
-	$t->updateItem();
-	#print_r($t->getRecentOrders());
-	#$t->sendMessage();*/

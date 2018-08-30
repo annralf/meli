@@ -201,8 +201,6 @@ function get_message(){
 	}).done(function(e){
 		var r = JSON.parse(e);
 		$('#message_body').text(r.message_body);
-		$('#message_subject').text(r.message_subject);
-		$('#message_subject_position').text(r.message_subject_position);
 	});
 }
 
@@ -210,8 +208,6 @@ function set_message(){
 	$.post(url,{
 		action:'update_message',
 		message_body : $('#message_body').val(),
-		message_subject : $('#message_subject').val(),
-		message_subject_position : $('#message_subject_position').val(),
 	}).done(function(e){
 		var result = JSON.parse(e);
 		if (result.result == 1) {

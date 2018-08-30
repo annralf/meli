@@ -230,20 +230,16 @@ switch ($_POST['action']) {
 	}else{
 		echo json_encode(array('result'=>0));		
 	}
-
 	break;
+    
 	case 'get_message':
-	$result = pg_fetch_object(pg_query("SELECT * FROM system_msg_meli_order;"));
-	echo json_encode(array('message_body' => $result->body_msg,
-	                       'message_subject' => $result->subject_msg,
-	                       'message_subject_position' => $result->subject_position_msg
-	               ));
+	$result = pg_fetch_object(pg_query("SELECT body_msg FROM system_msg_meli_order;"));
+	echo json_encode(array('message_body' => $result->body_msg));
 	break;
+
 	case 'update_message':
 	$message_body = $_POST['message_body'];
-	$message_subject = $_POST['message_subject'];
-	$message_subject_position = $_POST['message_subject_position'];
-	$sql = "UPDATE system_msg_meli_order SET body_msg ='$message_body', subject_msg='$message_subject', subject_position_msg='$message_subject_position';";
+	$sql = "UPDATE system_msg_meli_order SET body_msg ='$message_body';";
 	$result = pg_query($sql);
 	if ($result > 0) {
 		echo json_encode(array('result'=>1));
