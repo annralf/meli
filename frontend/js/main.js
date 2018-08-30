@@ -236,8 +236,69 @@ function get_key_words(){
 
 function set_key_words(){
 	var list = data.chipsData;
-	console.log(list);
+	var keys = [];
 	for(var i in list){
-				console.log(list[i]);				
-			}
+		keys.push(list[i].tag)
+		}
+	$.post(url,{
+		action:'update_key_words',
+		key_words : keys.toString()
+	}).done(function(e){
+		var result = JSON.parse(e);
+		if (result.result == 1) {
+			alert('Actualizado con éxito!');
+		}else{
+			alert('Ha ocurrido un problema con la actualización!');			
+		}
+	});
+}
+
+function delete_item(item){
+	$('.'+item).hide();
+	$.post(url,{
+		action:'delete_item',
+		item:item
+	}).done(function(e){
+		var result = JSON.parse(e);
+		if (result.result == 1) {
+			alert('Eliminado con éxito!');
+		}else{
+			alert('Ha ocurrido un problema con la eliminación!');			
+		}
+	});
+}
+
+function exit(){
+	sessionStorage.clear();
+	$(location).attr('href','index.html');
+}
+
+function login(){
+	$.post(url,{
+		action:'login',
+		user : $('#user').val(),
+		pass : $('#pass').val()
+	}).done(function(e){
+		var result = JSON.parse(e);
+		if (result.result == 1) {
+			var result = JSON.parse(e);
+			sessionStorage.setItem('token', result.token);
+			$(location).attr('href','dashboard.html');
+
+		}else{
+			alert('Usuario/contraseña inválido!');			
+			location.reload();
+		}
+	});
+}
+
+function clear_index(){
+	$(':text').val(" ");
+	$('#pass').val(" ");
+}
+
+function is_login(){
+	if(sessionStorage.getItem('token') === null){
+		$(location).attr('href','index.html');		
+	}
 }

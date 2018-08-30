@@ -19,7 +19,8 @@
 				<img  class="" src="img/logo.png">
 			</div>
 			<dir class="user_info">
-				<h2>Bienvenido Alfredo</h2>
+				<h5>Bienvenido Nagasaki Manager</h5>
+				<p style="cursor: pointer;" title="Salir del sistema" onclick="exit()"><i class="fa fa-sign-out" aria-hidden="true"></i></p>
 			</dir>
 		</div>
 		<div class="row dasboard_base">
@@ -118,15 +119,13 @@
 						</div>
 					</li>
 					<li>
-						<div class="collapsible-header"><i class="material-icons">search</i>Palabras claves</div>
+						<div class="collapsible-header" onclick="get_key_words()"><i class="material-icons">search</i>Palabras claves</div>
 						<div class="collapsible-body">
 							<div class="chips chips-initial"></div>
-							<button class="btn key_words">Actualizar</button>
+							<a class="btn key_words" onclick="set_key_words()">Actualizar</a>
 						</div>
 					</li>
 				</ul>
-			</div>
-			<div class="row tables">
 				<table id="table_aws" class="display" style="display: none;">
 					<thead>
 						<tr>
@@ -136,7 +135,7 @@
 							<th>Precio</th>
 							<th>Link</th>
 							<th>Última actualización</th>
-							<!--th>Acciones</th-->
+							<th>Acciones</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -158,6 +157,9 @@
 					</tbody>
 				</table>
 			</div>
+			<div class="row tables">
+				
+			</div>
 		</div>
 	</div>
 
@@ -168,17 +170,9 @@
 <script type="text/javascript" src="js/main.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
+		is_login()
 		initial();
-		get_key_words();
-		set_key_words();
 		$('.collapsible').collapsible();
-		$('.key_words').click(function(){
-			//data.addChip({tag:'test'});
-			for(var i in data.chipsData){
-				console.log(data.chipsData[i].tag);				
-			}
-			console.log('log');
-		});
 	});
 </script>
 </html>

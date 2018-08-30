@@ -4,7 +4,9 @@ require_once 'db_mng.php';
 
 $conn    = new Connect();
 $k	 = 1;
-$key     ="Samsung,AMD,Intel,Adata,Asus,Corsair,Crucial,Dell,EVGA,Gigabyte,Kingston,Lenovo,MSI,Micron,SanDisk,Nzxt,Seagate,RAZER,Google,Toshiba,Steelseries,Motorola,Sony,HP,Elegoo,Aukey,Havit,Redragon,Hcman,Wester Digital,Vengance,HyperX Kingston";
+$result = pg_fetch_object(pg_query('SELECT key_words FROM system_aws_key_words'));
+
+$key     =$result->key_words;
 $j       = 1;
 
 $searchKey =explode(",", $key);

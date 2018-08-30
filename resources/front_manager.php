@@ -13,13 +13,14 @@ switch ($_POST['action']) {
 		$table = "";
 		$i = 1;
 		while ($items = pg_fetch_object($source)) {
-			$table .="<tr>";
+			$table .="<tr class='$items->id'>";
 			$table .="<td>$i</td>";
 			$table .="<td>$items->sku</td>";
 			$table .="<td style='width: 450px; word-wrap: break-word;'>$items->product_title_english</td>";
 			$table .="<td>$ $items->sale_price USD</td>";
 			$table .="<td style='width: 85px; word-wrap: break-word;'><a href='$items->url'>Ir a artículo $items->sku</a></td>";
 			$table .="<td>$items->update_date</td>";
+			$table .="<td><i class='fa fa-trash' aria-hidden='true' onclick='delete_item($items->id)' style='cursor:point;'></i></td>";
 			$table .= "</tr>";
 			$i++;
 		}
@@ -58,6 +59,7 @@ switch ($_POST['action']) {
 			$table .="<td>$ $items->sale_price USD</td>";
 			$table .="<td style='width: 85px; word-wrap: break-word;'><a href='$items->url'>Ir a artículo $items->sku</a></td>";
 			$table .="<td>$items->update_date</td>";
+			$table .="<td><i class='fa fa-trash' aria-hidden='true' onclick='delete_item($items->id)' style='cursor:point;'></i></td>";
 			$table .= "</tr>";
 			$i++;
 		}
@@ -98,6 +100,7 @@ switch ($_POST['action']) {
 			$table .="<td>$ $items->sale_price USD</td>";
 			$table .="<td style='width: 85px; word-wrap: break-word;'><a href='$items->url'>Ir a artículo $items->sku</a></td>";
 			$table .="<td>$items->update_date</td>";
+			$table .="<td><i class='fa fa-trash' aria-hidden='true' onclick='delete_item($items->id)' style='cursor:point;'></i></td>";
 			$table .= "</tr>";
 			$i++;
 		}
@@ -267,7 +270,7 @@ switch ($_POST['action']) {
 	$sql = "SELECT name FROM system_users WHERE  user_name = '$user' AND password ='$pass';";
 	$result = pg_fetch_object(pg_query($sql));
 	if (isset($result->name)) {
-		echo json_encode(array('result'=>1));
+		echo json_encode(array('result'=>1,'token'=>rand(10,99)));
 	}else{
 		echo json_encode(array('result'=>0));		
 	}
@@ -310,4 +313,14 @@ switch ($_POST['action']) {
 	}
 	echo json_encode(array('result'=>$table));
 	break;
+	case 'delete_item':
+		$item = $_POST['item'];
+		$sql = "DELETE FROM aws_items WHERE id = $item";
+		$result = pg_query($sql);
+		if ($result > 0) {
+			echo json_encode(array('result'=>1));
+		}else{
+			echo json_encode(array('result'=>0));		
+		}
+		break;
 }
