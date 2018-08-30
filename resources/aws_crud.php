@@ -20,7 +20,7 @@ class aws_mng
 	}
 
 	function update(){
-		$sql = "select upper(sku) as sku from aws_sku order by id desc offset 7453;";
+		$sql = "select upper(sku) as sku from aws_sku order by id desc;";
 		$result = pg_query($sql);
 		$list = array();
 		$cant = 0;
