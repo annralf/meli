@@ -191,7 +191,7 @@ class Meli
 			}
 
 	    #final price 
-			$sub_final_price = ceil($base_price + $feed_price + (($base_price + $feed_price)*1.31));
+			$sub_final_price = ceil($base_price + $feed_price + (($base_price + $feed_price)*$this->shop_detail->price_cop));
 		    #tax price
 			if ($weight > 1000 && $sub_final_price < 200) {
 				$tax_price = 0.10;
@@ -353,28 +353,31 @@ class Meli
 			$id = $this->shop_detail->id;
 			$sql = "select * from meli_item_detail where id not in (select aws_id from meli_items where shop_id = $id)";
 			$result = pg_query($sql);
+			$description_db = pg_fetch_object(pg_query("SELECT * FROM system_meli_description;"));
 			$description_title = "DESCRIPCION DEL PRODUCTO";
 			$description_title .= "\n";
 			$delivery_time  = "\n";
 			$delivery_time .= "\n";
 			$delivery_time .= "TIEMPOS DE ENTREGA";
 			$delivery_time .= "\n";
-			$delivery_time .= "• DE 10 A 15 DIAS HABILES";
+			$delivery_time .= $description_db->delivery_time;
 			$delivery_time .= "\n";
 			$delivery_time .= "\n";
-			$complementary_description = "ESTE ES UN ARTICULO IMPORTADO DESDE JAPON Ó USA";
+			$complementary_description = $description_db->additional_information;
 			$complementary_description .= "\n";
 			$complementary_description .= "\n";
 			$complementary_description .="MÉTODOS DE ENVÍO";
 			$complementary_description .= "\n";
-			$complementary_description .= "Nuestros envíos son totalmente gratis y cubren todo el territorio nacional de Colombia a través del correo 4-72";
+			$complementary_description .= $description_db->delivery_details;
 			$complementary_description .= "\n";
 			$complementary_description .= "\n";
 			$complementary_description .= "EN CASO DE RETRACTO";
 			$complementary_description .= "\n";
-			$complementary_description .= "• Se puede realizar la devolución del producto en un periodo máximo de 5 días hábiles a partir de la entrega.";
+			$complementary_description .= htmlspecialchars_decode($description_db->retract_policity);
 			$complementary_description .= "\n";
-			$complementary_description .= "• Los costos de retorno hacia los Estados Unidos son asumidos por el COMPRADOR, este varía de acuerdo con el peso y/o volumen del producto y no es reembolsable.";
+			$complementary_description .= "\n";
+			$complementary_description .= "Nagasaki Imports";
+			$complementary_description = $delivery_time.$complementary_description;
 			$k = 1;
 			$complementary_description = $delivery_time.$complementary_description;
 			while ($item = pg_fetch_object($result)) {
@@ -486,30 +489,29 @@ class Meli
 		public function updateItem(){
 			$this->connect;
 			$id = $this->shop_detail->id;
-			$sql = "SELECT * FROM meli_item_update WHERE price = 0;";
+			$sql = "SELECT * FROM meli_item_update WHERE shop_id = '$id';";
 			$result = pg_query($sql);
+			$description_db = pg_fetch_object(pg_query("SELECT * FROM system_meli_description;"));
 			$description_title = "DESCRIPCION DEL PRODUCTO";
 			$description_title .= "\n";
 			$delivery_time  = "\n";
 			$delivery_time .= "\n";
 			$delivery_time .= "TIEMPOS DE ENTREGA";
 			$delivery_time .= "\n";
-			$delivery_time .= "• DE 10 A 15 DIAS HABILES";
+			$delivery_time .= $description_db->delivery_time;
 			$delivery_time .= "\n";
 			$delivery_time .= "\n";
-			$complementary_description = "ESTE ES UN ARTICULO IMPORTADO DESDE JAPON Ó USA";
+			$complementary_description = $description_db->additional_information;
 			$complementary_description .= "\n";
 			$complementary_description .= "\n";
 			$complementary_description .="MÉTODOS DE ENVÍO";
 			$complementary_description .= "\n";
-			$complementary_description .= "Nuestros envíos son totalmente gratis y cubren todo el territorio nacional de Colombia a través del correo 4-72";
+			$complementary_description .= $description_db->delivery_details;
 			$complementary_description .= "\n";
 			$complementary_description .= "\n";
 			$complementary_description .= "EN CASO DE RETRACTO";
 			$complementary_description .= "\n";
-			$complementary_description .= "• Se puede realizar la devolución del producto en un periodo máximo de 5 días hábiles a partir de la entrega.";
-			$complementary_description .= "\n";
-			$complementary_description .= "• Los costos de retorno hacia los Estados Unidos son asumidos por el COMPRADOR, este varía de acuerdo con el peso y/o volumen del producto y no es reembolsable.";
+			$complementary_description .= htmlspecialchars_decode($description_db->retract_policity);
 			$complementary_description .= "\n";
 			$complementary_description .= "\n";
 			$complementary_description .= "Nagasaki Imports";
@@ -591,11 +593,11 @@ class Meli
 
 
 	}
-
+/*
 	$t = new Meli(1);
 	#echo $t->set_price(34,1049.99);
 	$category = " Productos de oficina, categorías, artículos escolares y de oficina, accesorios de escritorio y organizadores del área de trabajo, alfombrillas para ratón y reposamuñecas, alfombrillas para ratón                                                       ";
 	#$category_id = $t->search_category($category);
 	$t->updateItem();
 	#print_r($t->getRecentOrders());
-	#$t->sendMessage();
+	#$t->sendMessage();*/
