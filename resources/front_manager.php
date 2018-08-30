@@ -218,12 +218,13 @@ switch ($_POST['action']) {
 
 	break;
 	case 'get_warranty':
-	$result = pg_fetch_object(pg_query("SELECT warranty FROM system_meli_warranty;"));
+	$result = pg_fetch_object(pg_query("SELECT warranty FROM meli_additionals;"));
 	echo json_encode(array('result'=>$result->warranty));
 	break;
+    
 	case 'update_warranty':
 	$warranty = $_POST['product_warrant'];
-	$sql = "UPDATE system_meli_warranty SET warranty='$warranty'";
+	$sql = "UPDATE meli_additionals SET warranty='$warranty'";
 	$result = pg_query($sql);
 	if ($result > 0) {
 		echo json_encode(array('result'=>1));
