@@ -8,7 +8,7 @@ switch ($_POST['action']) {
 	$sql;
 	switch ($_POST['type']) {
 		case 'detail':
-		$sql = "SELECT id, sku, product_title_english, sale_price, url, update_date FROM aws_items ORDER BY id ASC LIMIT 2";
+		$sql = "SELECT id, sku, product_title_english, sale_price, url, update_date FROM aws_items ORDER BY id ASC";
 		$source = pg_query($sql);		
 		$table = "";
 		$i = 1;
@@ -47,7 +47,7 @@ switch ($_POST['action']) {
 	$sql;
 	switch ($_POST['type']) {
 		case 'detail':
-		$sql = "SELECT sku, product_title_english, sale_price, url, update_date FROM aws_items WHERE is_prime='1';";
+		$sql = "SELECT id, sku, product_title_english, sale_price, url, update_date FROM aws_items WHERE is_prime='1';";
 		$source = pg_query($sql);		
 		$table = "";
 		$i = 1;
@@ -88,7 +88,7 @@ switch ($_POST['action']) {
 	$sql;
 	switch ($_POST['type']) {
 		case 'detail':
-		$sql = "SELECT sku, product_title_english, sale_price, url, update_date FROM aws_items WHERE is_prime='0';";
+		$sql = "SELECT id,sku, product_title_english, sale_price, url, update_date FROM aws_items WHERE is_prime='0';";
 		$source = pg_query($sql);		
 		$table = "";
 		$i = 1;
