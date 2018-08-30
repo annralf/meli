@@ -54,7 +54,10 @@
 	margin-right:  15px !important;
 	margin-left:  20px !important;
 	text-align: center;
-	    box-shadow: 2px 2px 11px #545a5f;
+	box-shadow: 2px 2px 11px #545a5f;
+	cursor: pointer;
+	background-color: white;
+
 
 	.counter{
 		font-size: 4em;
@@ -75,10 +78,12 @@
 .secundary_card{
 	height: 57vh;
 	width: 100%;
-    box-shadow: 2px 2px 11px #545a5f;
-    hr{
-    	width: 70%;
-    }
+	box-shadow: 2px 2px 11px #545a5f;
+	cursor: pointer;
+	background-color: white;
+	hr{
+		width: 70%;
+	}
 
 	.row{
 		width: 98%;
@@ -133,7 +138,7 @@
 
 .collapsible{
 	li{
-		width: 14vw !important;
+		width: 10vw !important;
 	}
 	.collapsible-body{
 		width: 70vw; 

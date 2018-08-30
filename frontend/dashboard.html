@@ -25,21 +25,21 @@
 		<div class="row dasboard_base">
 			<div class="row">
 				<div class="col s6 m6 l6" style="display: inline-flex;">
-					<div class="row main_card">
+					<div class="row main_card" onclick="get_aws_items()" title="Detalle de ítems cargados desde Amazon">
 						<p class="counter counter_aws_items">12K</p>
 						<b class="title">ítems creados</b>
 						<p class="logo"><i class="fa fa-amazon" aria-hidden="true"></i></p>
-						<p class="ref"><a href="">Ver detalle</a></p>
+						<p class="ref">Ver detalle</p>
 					</div>
 					<div class="row secundary_card">
-						<div class="row">
+						<div class="row" onclick="get_aws_items_prime()" title="Detalle de los ítems cargados con categoría Prime">
 							<p class="counter counter_aws_items_prime">12K</p>
 							<b class="title">ítems Prime</b>
 							<p class="logo"><i class="fa fa-check-circle" aria-hidden="true"></i></p>
 							<p class="ref"><a href="">Ver detalle</a></p>
 						</div>
 						<hr>
-						<div class="row">
+						<div class="row" onclick="get_aws_items_noprime()" title="Detalle de ítems cargados No Prime">
 							<p class="counter counter_aws_items_no_prime">12K</p>
 							<b class="title">ítems No Prime</b>
 							<p class="logo"><i class="fa fa-exclamation-circle" aria-hidden="true"></i></p>
@@ -48,7 +48,7 @@
 					</div>
 				</div>
 				<div class="col s6 m6 l6" style="display: inline-flex;">
-					<div class="row main_card">
+					<div class="row main_card" onclick="get_meli_items()" title="Detalle de los productos publicados en MercadoLibre">
 						<p class="counter counter_meli_items">12K</p>
 						<b class="title">ítems creados en MercadoLibre</b>
 						<p class="logo"><i class="fa fa-cart-plus" aria-hidden="true"></i></p>
@@ -59,16 +59,25 @@
 			<div class="row action_buttons">
 				<ul class="collapsible">
 					<li>
-						<div class="collapsible-header"><i class="material-icons">monetization_on</i>Precio</div>
+						<div class="collapsible-header" onclick="get_usd_price()"><i class="material-icons">monetization_on</i>Precio</div>
 						<div class="collapsible-body">
 							<form>
 								<input type="text" class="validate" name="dollar_price" id="dollar_price">
-								<button class="btn">Actualizar</button>
+								<a class="btn" onclick="set_usd_price()">Actualizar</a>
 							</form>
 						</div>
 					</li>
 					<li>
-						<div class="collapsible-header"><i class="material-icons">subject</i>Descripción</div>
+						<div class="collapsible-header" onclick="get_revenue()"><i class="material-icons">attach_money</i>Ganancia</div>
+						<div class="collapsible-body">
+							<form>
+								<input type="text" class="validate" name="revenue" id="revenue">
+								<a class="btn" onclick="set_revenue()">Actualizar</a>
+							</form>
+						</div>
+					</li>
+					<li>
+						<div class="collapsible-header" onclick="get_description()"><i class="material-icons">subject</i>Descripción</div>
 						<div class="collapsible-body">
 							<form>
 								<label for ="product_description_dt">Detalle de tiempo de entrega:</label>
@@ -79,21 +88,21 @@
 								<textarea class="validate" id="product_description_dd" rows="30" ></textarea>
 								<label for ="product_description_rp">Información en caso de devolución:</label>
 								<textarea class="validate" id="product_description_rp" rows="30" ></textarea>
-								<button class="btn">Actualizar</button>
+								<a class="btn" onclick="set_description()">Actualizar</a>
 							</form>
 						</div>
 					</li>
 					<li>
-						<div class="collapsible-header"><i class="material-icons">warning</i>Garantía</div>
+						<div class="collapsible-header" onclick="get_warranty()"><i class="material-icons">warning</i>Garantía</div>
 						<div class="collapsible-body">
 							<form>
 								<textarea class="validate" id="product_warrant" rows="30"></textarea>
-								<button class="btn">Actualizar</button>
+								<a class="btn" onclick="set_warranty()">Actualizar</a>
 							</form>
 						</div>
 					</li>
 					<li>
-						<div class="collapsible-header"><i class="material-icons">insert_comment</i>Mensaje</div>
+						<div class="collapsible-header" onclick="get_message()"><i class="material-icons">insert_comment</i>Mensaje</div>
 						<div class="collapsible-body">
 							<form>
 								<label for ="message_body">Mensaje:</label>
@@ -104,7 +113,7 @@
 								<textarea class="validate" id="message_subject" rows="30" ></textarea>
 								<label for ="message_subject_position">Cargo del remitente:</label>
 								<textarea class="validate" id="message_subject_position" rows="30" ></textarea>
-								<button class="btn">Actualizar</button>
+								<a class="btn" onclick="set_message()">Actualizar</a>
 							</form>
 						</div>
 					</li>
@@ -118,7 +127,7 @@
 				</ul>
 			</div>
 			<div class="row tables">
-				<table id="table_aws" class="display">
+				<table id="table_aws" class="display" style="display: none;">
 					<thead>
 						<tr>
 							<th>#</th>
@@ -127,22 +136,22 @@
 							<th>Precio</th>
 							<th>Link</th>
 							<th>Última actualización</th>
-							<th>Acciones</th>
+							<!--th>Acciones</th-->
 						</tr>
 					</thead>
 					<tbody>
 					</tbody>
 				</table>
-				<table id="table_meli" class="display">
+				<table id="table_meli" class="display" style="display: none;">
 					<thead>
 						<tr>
 							<th>#</th>
-							<th>Id</th>
+							<th>Id MercadoLibre</th>
+							<th>SKU</th>
 							<th>Titulo</th>
 							<th>Precio</th>
 							<th>Link</th>
 							<th>Última actualización</th>
-							<th>Acciones</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -160,11 +169,9 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 		initial();
-		var test ="{tag: 'Apple',}, {tag: 'Microsoft',}, {tag: 'Google',}";
+		get_key_words();
+		set_key_words();
 		$('.collapsible').collapsible();
-		 $('#table_aws').DataTable();
-		 $('#table_meli').DataTable();
-		var data = M.Chips.getInstance($('.chips').chips({data: [{tag: 'Apple',}, {tag: 'Microsoft',}, {tag: 'Google',}],}));
 		$('.key_words').click(function(){
 			//data.addChip({tag:'test'});
 			for(var i in data.chipsData){

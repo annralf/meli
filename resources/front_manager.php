@@ -8,19 +8,19 @@ switch ($_POST['action']) {
 	$sql;
 	switch ($_POST['type']) {
 		case 'detail':
-		$sql = "SELECT sku, product_title_english, sale_price, url, update_date FROM aws_items;";
+		$sql = "SELECT id, sku, product_title_english, sale_price, url, update_date FROM aws_items ORDER BY id ASC LIMIT 2";
 		$source = pg_query($sql);		
 		$table = "";
 		$i = 1;
 		while ($items = pg_fetch_object($source)) {
-			$table +="<tr>";
-			$table +="<td>$i</td>";
-			$table +="<td>$items->sku</td>";
-			$table +="<td>$items->product_title_english</td>";
-			$table +="<td>$ $items->sale_price USD</td>";
-			$table +="<td><a href='$items->url'>Ir a artículo $items->sku</a></td>";
-			$table +="<td>$items->update_date</td>";
-			$table += "</tr>";
+			$table .="<tr>";
+			$table .="<td>$i</td>";
+			$table .="<td>$items->sku</td>";
+			$table .="<td style='width: 450px; word-wrap: break-word;'>$items->product_title_english</td>";
+			$table .="<td>$ $items->sale_price USD</td>";
+			$table .="<td style='width: 85px; word-wrap: break-word;'><a href='$items->url'>Ir a artículo $items->sku</a></td>";
+			$table .="<td>$items->update_date</td>";
+			$table .= "</tr>";
 			$i++;
 		}
 		echo json_encode(array('result'=>$table));
@@ -51,35 +51,37 @@ switch ($_POST['action']) {
 		$table = "";
 		$i = 1;
 		while ($items = pg_fetch_object($source)) {
-			$table +="<tr>";
-			$table +="<td>$i</td>";
-			$table +="<td>$items->sku</td>";
-			$table +="<td>$items->product_title_english</td>";
-			$table +="<td>$ $items->sale_price USD</td>";
-			$table +="<td><a href='$items->url'>Ir a artículo $items->sku</a></td>";
-			$table +="<td>$items->update_date</td>";
-			$table += "</tr>";
+			$table .="<tr>";
+			$table .="<td>$i</td>";
+			$table .="<td>$items->sku</td>";
+			$table .="<td style='width: 450px; word-wrap: break-word;'>$items->product_title_english</td>";
+			$table .="<td>$ $items->sale_price USD</td>";
+			$table .="<td style='width: 85px; word-wrap: break-word;'><a href='$items->url'>Ir a artículo $items->sku</a></td>";
+			$table .="<td>$items->update_date</td>";
+			$table .= "</tr>";
 			$i++;
 		}
 		echo json_encode(array('result'=>$table));
 		break;
+		case 'counter':
+		$sql = "SELECT COUNT(*) FROM aws_items WHERE is_prime='1';";
+		$result = pg_fetch_object(pg_query($sql));
+		$counter = $result->count;
+		$letter = "";
+		if ($counter > 1000) {
+			$counter = $counter/1000;
+			$letter = "K";
+		}
+		if ($counter > 1000000) {
+			$counter = $counter/1000000;
+			$letter = "M";
+		}
+		echo json_encode(array('amount' => $counter, 'letter'=>$letter));
+		break;
 	}
-	break;	    	
-	case 'counter':
-	$sql = "SELECT COUNT(*) FROM aws_items WHERE is_prime='1';";
-	$result = pg_fetch_object(pg_query($sql));
-	$counter = $result->count;
-	$letter = "";
-	if ($counter > 1000) {
-		$counter = $counter/1000;
-		$letter = "K";
-	}
-	if ($counter > 1000000) {
-		$counter = $counter/1000000;
-		$letter = "M";
-	}
-	echo json_encode(array('amount' => $counter, 'letter'=>$letter));
 	break;
+
+
 	case 'get_aws_items_noprime':
 	$sql;
 	switch ($_POST['type']) {
@@ -89,14 +91,14 @@ switch ($_POST['action']) {
 		$table = "";
 		$i = 1;
 		while ($items = pg_fetch_object($source)) {
-			$table +="<tr>";
-			$table +="<td>$i</td>";
-			$table +="<td>$items->sku</td>";
-			$table +="<td>$items->product_title_english</td>";
-			$table +="<td>$ $items->sale_price USD</td>";
-			$table +="<td><a href='$items->url'>Ir a artículo $items->sku</a></td>";
-			$table +="<td>$items->update_date</td>";
-			$table += "</tr>";
+			$table .="<tr>";
+			$table .="<td>$i</td>";
+			$table .="<td>$items->sku</td>";
+			$table .="<td style='width: 450px; word-wrap: break-word;'>$items->product_title_english</td>";
+			$table .="<td>$ $items->sale_price USD</td>";
+			$table .="<td style='width: 85px; word-wrap: break-word;'><a href='$items->url'>Ir a artículo $items->sku</a></td>";
+			$table .="<td>$items->update_date</td>";
+			$table .= "</tr>";
 			$i++;
 		}
 		echo json_encode(array('result'=>$table));
@@ -123,19 +125,20 @@ switch ($_POST['action']) {
 	$sql;
 	switch ($_POST['type']) {
 		case 'detail':
-		$sql = "SELECT mpid, title, price, permalink, update_date FROM meli_items";
+		$sql = "SELECT mpid, sku, title, price, permalink, update_date FROM meli_sku_detail";
 		$source = pg_query($sql);
 		$table = "";
 		$i = 1;
 		while ($items = pg_fetch_object($source)) {
-			$table +="<tr>";
-			$table +="<td>$i</td>";
-			$table +="<td>$items->mpid</td>";
-			$table +="<td>$items->title</td>";
-			$table +="<td>$ $items->price COP</td>";
-			$table +="<td><a href='$items->url'>Ir a artículo $items->mpid</a></td>";
-			$table +="<td>$items->update_date</td>";
-			$table += "</tr>";
+			$table .="<tr>";
+			$table .="<td>$i</td>";
+			$table .="<td>$items->mpid</td>";
+			$table .="<td>$items->sku</td>";
+			$table .="<td style='width: 450px; word-wrap: break-word;'>$items->title</td>";
+			$table .="<td>$ $items->price COP</td>";
+			$table .="<td style='width: 85px; word-wrap: break-word;'><a href='$items->permalink'>Ir a artículo $items->mpid</a></td>";
+			$table .="<td>$items->update_date</td>";
+			$table .= "</tr>";
 			$i++;
 		}
 		echo json_encode(array('result'=>$table));
@@ -162,9 +165,10 @@ switch ($_POST['action']) {
 	$result = pg_fetch_object(pg_query("SELECT price_cop FROM meli_price WHERE shop_id = '1';"));
 	echo json_encode(array('result'=>$result->price_cop));
 	break;
+
 	case 'update_usd_price':
 	$price = $_POST['dollar_price'];
-	$sql = "UPDATE meli_price SET meli_price = '$price' WHERE shop_id = '1';";
+	$sql = "UPDATE meli_price SET price_cop = '$price' WHERE shop_id = '1';";
 	$result = pg_query($sql);
 	if ($result > 0) {
 		echo json_encode(array('result'=>1));
@@ -172,6 +176,22 @@ switch ($_POST['action']) {
 		echo json_encode(array('result'=>0));		
 	}
 	break;
+
+	case 'get_revenue':
+	$result = pg_fetch_object(pg_query("SELECT revenue FROM meli_price WHERE shop_id = '1';"));
+	echo json_encode(array('result'=>$result->revenue));
+	break;
+	case 'update_revenue':
+	$revenue = $_POST['revenue'];
+	$sql = "UPDATE meli_price SET revenue = '$revenue' WHERE shop_id = '1';";
+	$result = pg_query($sql);
+	if ($result > 0) {
+		echo json_encode(array('result'=>1));
+	}else{
+		echo json_encode(array('result'=>0));		
+	}
+	break;
+
 	case 'get_description':
 	$result = pg_fetch_object(pg_query("SELECT * FROM system_meli_description;"));
 	echo json_encode(array('product_description_dt' => $result->delivery_time,
@@ -230,7 +250,7 @@ switch ($_POST['action']) {
 	break;
 	case 'get_key_words':
 	$result = pg_fetch_object(pg_query('SELECT key_words FROM system_aws_key_words'));
-	echo json_encode(array('key_words' => $result->key_words));
+	echo json_encode(array('key_words' => explode(",", $result->key_words)));
 	break;
 	case 'update_key_words':
 	$key_words = $_POST['key_words'];
