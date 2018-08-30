@@ -363,12 +363,12 @@ class Meli
 			$delivery_time .= $description_db->delivery_time;
 			$delivery_time .= "\n";
 			$delivery_time .= "\n";
-			$complementary_description = $description_db->additional_information;
+			$complementary_description = htmlspecialchars_decode($description_db->additional_information);
 			$complementary_description .= "\n";
 			$complementary_description .= "\n";
 			$complementary_description .="MÉTODOS DE ENVÍO";
 			$complementary_description .= "\n";
-			$complementary_description .= $description_db->delivery_details;
+			$complementary_description .= htmlspecialchars_decode($description_db->delivery_details);
 			$complementary_description .= "\n";
 			$complementary_description .= "\n";
 			$complementary_description .= "EN CASO DE RETRACTO";
@@ -411,13 +411,17 @@ class Meli
 					$title = $this->scratch->change_simbols($item->title);
 					$description = str_replace(".-", "\n", $this->scratch->change_simbols($item->description));
 					$length = (strlen($complementary_description) - $category_info['max_description_length']) -1; 
-					$length_title = $category_info['max_title_length'] -1;
-					if (strlen($title) >= $length_title) {
+					$length_title = $category_info['max_title_length'];
+					if (strlen($title) > $length_title) {
 						$pos   = strrpos($title,' ', $length_title);
 						if ($pos > $length_title) {
 							$pos -= $pos - $length_title;
 						}
-						$title = substr($title, 0, $pos);
+						if ($pos == null) {
+						$title = substr($title, 0,$length_title);
+						}else{
+						    $title = substr($title, 0, $pos);						    
+						}
 					}
 					/*if (strlen($description) >= $length) {
 						$pos   = strpos($description, ' ', $length);
@@ -501,12 +505,12 @@ class Meli
 			$delivery_time .= $description_db->delivery_time;
 			$delivery_time .= "\n";
 			$delivery_time .= "\n";
-			$complementary_description = $description_db->additional_information;
+			$complementary_description = htmlspecialchars_decode($description_db->additional_information);
 			$complementary_description .= "\n";
 			$complementary_description .= "\n";
 			$complementary_description .="MÉTODOS DE ENVÍO";
 			$complementary_description .= "\n";
-			$complementary_description .= $description_db->delivery_details;
+			$complementary_description .= htmlspecialchars_decode($description_db->delivery_details);
 			$complementary_description .= "\n";
 			$complementary_description .= "\n";
 			$complementary_description .= "EN CASO DE RETRACTO";
