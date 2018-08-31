@@ -506,7 +506,7 @@ class Meli
 		public function updateItem(){
 			$this->connect;
 			$id = $this->shop_detail->id;
-			$sql = "SELECT * FROM meli_item_update WHERE shop_id = '$id' AND mpid='MCO482613450';";
+			$sql = "SELECT * FROM meli_item_update WHERE shop_id = '$id';";
 			$result = pg_query($sql);
 			$description_db = pg_fetch_object(pg_query("SELECT * FROM system_meli_description;"));
 			$description_title = "DESCRIPCION DEL PRODUCTO";
