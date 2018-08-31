@@ -160,6 +160,7 @@ class Meli
 			$range_3 = 2000;
 			$range_4 = 4000;
 			$pounds_value = 453.592;
+			#echo "Peso Base: $weight\n";
 			$weight = $weight*$pounds_value;
 			$this->connect;
 			$sql = "SELECT weight, price FROM shop_feeds;";
@@ -200,8 +201,16 @@ class Meli
 			if($weight >= 1000 && $base_price >= 200){
 				$tax_price = 0.29;
 			}
+			#echo "Tasa envio: $feed_price\n";
+			#echo "Precio Base: $base_price\n";
+			#echo "Peso según formula: $weight\n";
+			#echo "MELI %: $meli\n";
+			#echo "Nagasaki %:".$this->shop_detail->revenue."\n";
+			#echo "Impuesto %: $tax_price\n";
+			#echo "Precio Dolar:".$this->shop_detail->price_cop."\n";
 			$final_percent = $meli + $tax_price + $this->shop_detail->revenue;
-			$final_price = ceil($base_price * $this->shop_detail->price_cop * $final_percent);
+			$final_price = ceil((($base_price + $feed_price)+ ($final_percent * ($base_price + $feed_price))) * $this->shop_detail->price_cop);
+			#echo "Precio Total: $final_price\n";die();
 			return $final_price;
 		}
 
@@ -389,11 +398,13 @@ class Meli
 					$images      = explode("~^~", $item->pictures);
 					$pictures = array();
 					$i = 0;
-					while ($i < count($images) && $i < 8) {
-						array_push($pictures, array('source' => $images[$i]));
-						$i++;					
+					while ($i < count($images) && $i < 9) {
+					if ($i == 1) {
+					    array_push($pictures, array('source' => "https://app.tokioexpress.co/img/entrega.png"));
 					}
-    				        array_push($pictures, array('source' => "https://app.tokioexpress.co/img/entrega.png"));
+					array_push($pictures, array('source' => $images[$i]));
+					$i++;					
+					}
 					$shipping = array();
 					if($category_info['shipping_mode'] == 'me2'){
 						$shipping = array('mode'    => 'me2', 
@@ -495,7 +506,7 @@ class Meli
 		public function updateItem(){
 			$this->connect;
 			$id = $this->shop_detail->id;
-			$sql = "SELECT * FROM meli_item_update WHERE shop_id = '$id';";
+			$sql = "SELECT * FROM meli_item_update WHERE shop_id = '$id' AND mpid='MCO482613450';";
 			$result = pg_query($sql);
 			$description_db = pg_fetch_object(pg_query("SELECT * FROM system_meli_description;"));
 			$description_title = "DESCRIPCION DEL PRODUCTO";
@@ -528,11 +539,13 @@ class Meli
 				$images      = explode("~^~", $item->pictures);
 				$pictures = array();
 				$i = 0;
-				while ($i < count($images) && $i < 8) {
+				while ($i < count($images) && $i < 9) {
+					if ($i == 1) {
+					    array_push($pictures, array('source' => "https://app.tokioexpress.co/img/entrega.png"));
+					}
 					array_push($pictures, array('source' => $images[$i]));
 					$i++;					
 				}
-				array_push($pictures, array('source' => "https://app.tokioexpress.co/img/entrega.png"));
 				#get categories
 				$category_info = $this->search_category($item->category_id);
 				$description =  "";
