@@ -167,19 +167,21 @@ class Meli
 			$match_weight = 0;
 			$feed_price = 0;
 			$tax_price = 0;
-	    #Range 1 weight from 0 to 500
+			$meli = 0.12;
+			$final_percent  = 0;
+			#Range 1 weight from 0 to 500
 			if ($weight > 0 && $weight <= $range_1) {
 				$weight += $this->shop_detail->range_1;
 			}
-	    #Range 2 weight from 501 to 1000
+			#Range 2 weight from 501 to 1000
 			if ($weight > $range_1 && $weight <= $range_2) {
 				$weight += $this->shop_detail->range_2;
 			}
-	    #Range 3 weight from 1001 to 2000
+			#Range 3 weight from 1001 to 2000
 			if ($weight > $range_2 && $weight <= $range_3) {
 				$weight += $this->shop_detail->range_3;
 			}
-	    #Range 4 weight from 2001 to 4000
+			#Range 4 weight from 2001 to 4000
 			if ($weight > $range_4) {
 				$weight += $this->shop_detail->range_4;
 			}
@@ -191,16 +193,15 @@ class Meli
 			}
 
 	    #final price 
-			$sub_final_price = ceil($base_price + $feed_price + (($base_price + $feed_price)*$this->shop_detail->price_cop));
 		    #tax price
-			if ($weight > 1000 && $sub_final_price < 200) {
+			if ($weight >= 1000 && $base_price <= 200) {
 				$tax_price = 0.10;
 			}
-			if($weight > 1000 && $sub_final_price > 200){
+			if($weight >= 1000 && $base_price >= 200){
 				$tax_price = 0.29;
 			}
-			$final_price_COP = ceil($sub_final_price*$this->shop_detail->price_cop);
-			$final_price = ceil($final_price_COP + ($final_price_COP*$tax_price));
+			$final_percent = $meli + $tax_price + $this->shop_detail->revenue;
+			$final_price = ceil($base_price * $this->shop_detail->price_cop * $final_percent);
 			return $final_price;
 		}
 
@@ -392,6 +393,7 @@ class Meli
 						array_push($pictures, array('source' => $images[$i]));
 						$i++;					
 					}
+    				        array_push($pictures, array('source' => "https://app.tokioexpress.co/img/entrega.png"));
 					$shipping = array();
 					if($category_info['shipping_mode'] == 'me2'){
 						$shipping = array('mode'    => 'me2', 
@@ -418,9 +420,9 @@ class Meli
 							$pos -= $pos - $length_title;
 						}
 						if ($pos == null) {
-						$title = substr($title, 0,$length_title);
+							$title = substr($title, 0,$length_title);
 						}else{
-						    $title = substr($title, 0, $pos);						    
+							$title = substr($title, 0, $pos);						    
 						}
 					}
 					/*if (strlen($description) >= $length) {
@@ -493,7 +495,7 @@ class Meli
 		public function updateItem(){
 			$this->connect;
 			$id = $this->shop_detail->id;
-			$sql = "SELECT * FROM meli_item_update WHERE shop_id = '$id';";
+			$sql = "SELECT * FROM meli_item_update WHERE shop_id = '$id' limit 3";
 			$result = pg_query($sql);
 			$description_db = pg_fetch_object(pg_query("SELECT * FROM system_meli_description;"));
 			$description_title = "DESCRIPCION DEL PRODUCTO";
@@ -522,6 +524,16 @@ class Meli
 			$complementary_description = $delivery_time.$complementary_description;
 			$k = 1;
 			while ($item = pg_fetch_object($result)) {
+				#get pictures
+				$images      = explode("~^~", $item->pictures);
+				$pictures = array();
+				$i = 0;
+				while ($i < count($images) && $i < 8) {
+					array_push($pictures, array('source' => $images[$i]));
+					$i++;					
+				}
+				array_push($pictures, array('source' => "https://app.tokioexpress.co/img/entrega.png"));
+				#get categories
 				$category_info = $this->search_category($item->category_id);
 				$description =  "";
 				if ($item->price == 0) {
@@ -538,7 +550,8 @@ class Meli
 				$description = $description_title.$description.$complementary_description;
 				$update_item = array(
 					'price' => $this->set_price($item->weight,$item->price),
-					'available_quantity' => $avaliable_quantity
+					'available_quantity' => $avaliable_quantity,
+					'pictures' => $pictures
 				);
 				$update = $this->banner($item->mpid,array('plain_text' => $description));
 				$update_item = $this->update($item->mpid, $update_item);
