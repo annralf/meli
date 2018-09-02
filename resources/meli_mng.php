@@ -567,7 +567,7 @@ class Meli
 					'pictures' => $pictures
 				);*/
 				$update_item = array(
-					'status' => 'close',
+					'available_quantity' => 0,
 				);
 				$update = $this->banner($item->mpid,array('plain_text' => $description));
 				$update_item = $this->update($item->mpid, $update_item);
