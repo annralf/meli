@@ -561,10 +561,13 @@ class Meli
 					$description = substr($description, 0, $pos);
 				}
 				$description = $description_title.$description.$complementary_description;
-				$update_item = array(
+				/*$update_item = array(
 					'price' => $this->set_price($item->weight,$item->price),
 					'available_quantity' => $avaliable_quantity,
 					'pictures' => $pictures
+				);*/
+				$update_item = array(
+					'status' => 'close',
 				);
 				$update = $this->banner($item->mpid,array('plain_text' => $description));
 				$update_item = $this->update($item->mpid, $update_item);
